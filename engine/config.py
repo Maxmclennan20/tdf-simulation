@@ -48,4 +48,8 @@ TIME_GAP_PARAMS: dict[str, dict[str, tuple[float, float]]] = {
     },
 }
 
+# Rider tier thresholds for time gap generation (based on relevant rating)
+TIER_HIGH_THRESHOLD: int = 80   # rating above this → tier_high
+TIER_MID_THRESHOLD: int = 60    # rating above this → tier_mid (else tier_low)
+
 SIMULATION_ITERATIONS: int = 20_000
