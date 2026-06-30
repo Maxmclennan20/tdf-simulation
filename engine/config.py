@@ -2,16 +2,16 @@ from engine.models import StageType
 
 # Stage blending factors: primary and secondary rating weights per stage type
 STAGE_FACTORS: dict[StageType, dict[str, float]] = {
-    StageType.FLAT:     {"primary": 0.80, "secondary": 0.20},
-    StageType.HILLY:    {"primary": 0.65, "secondary": 0.35},
+    StageType.FLAT:     {"primary": 1.00, "secondary": 0.00},  # pure sprint — no gc boost
+    StageType.HILLY:    {"primary": 0.60, "secondary": 0.40},  # sprint + climbing (puncheurs)
     StageType.MOUNTAIN: {"primary": 0.75, "secondary": 0.25},
     StageType.TT:       {"primary": 0.80, "secondary": 0.20},
 }
 
 # Which ratings are primary/secondary per stage type
 STAGE_RATING_MAP: dict[StageType, tuple[str, str]] = {
-    StageType.FLAT:     ("sprint",   "gc"),
-    StageType.HILLY:    ("sprint",   "climbing"),
+    StageType.FLAT:     ("sprint",   "sprint"),    # secondary unused (weight 0)
+    StageType.HILLY:    ("sprint",   "climbing"),  # puncheur stages
     StageType.MOUNTAIN: ("climbing", "gc"),
     StageType.TT:       ("tt",       "gc"),
 }

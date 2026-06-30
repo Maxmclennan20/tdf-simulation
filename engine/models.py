@@ -41,7 +41,8 @@ class RiderState:
     form: float = 1.0
     dns: bool = False
     dnf: bool = False
-    calibration_factor: float = 1.0  # set by apply_odds_calibration(); multiplies stage weight
+    calibration_factor: float = 1.0        # GC odds calibration — applied on mountain/TT
+    stage_calibration_factor: float = 1.0  # stage win odds calibration — applied on flat/hilly
 
     def is_active(self) -> bool:
         return not self.dns and not self.dnf

@@ -21,8 +21,14 @@ async def lifespan(app: FastAPI):
     app_state.riders = r
     app_state.stages = s
     app_state.odds = o
+    # GC win odds → calibration_factor used on mountain/TT stages
     apply_odds_calibration(app_state.riders, app_state.odds,
-                           "gc_win", StageType.MOUNTAIN)
+                           "gc_win", StageType.MOUNTAIN,
+                           target_field="calibration_factor")
+    # Stage win odds → stage_calibration_factor used on flat/hilly stages
+    apply_odds_calibration(app_state.riders, app_state.odds,
+                           "stage_win", StageType.FLAT,
+                           target_field="stage_calibration_factor")
     yield
 
 
