@@ -8,13 +8,11 @@ interface Props {
 const RATINGS: (keyof Pick<Rider, 'sprint' | 'climbing' | 'tt' | 'gc'>)[] =
   ['sprint', 'climbing', 'tt', 'gc'];
 
-function RatingBadge({ value }: { value: number }) {
-  const color =
-    value >= 85 ? 'text-amber-400' :
-    value >= 70 ? 'text-emerald-400' :
-    value >= 55 ? 'text-blue-400' :
-    'text-gray-500';
-  return <span className={`text-xs font-mono font-semibold ${color}`}>{value}</span>;
+function ratingColor(value: number): string {
+  if (value >= 85) return '#fbbf24'; // amber-400
+  if (value >= 70) return '#34d399'; // emerald-400
+  if (value >= 55) return '#60a5fa'; // blue-400
+  return '#6b7280'; // gray-500
 }
 
 export function RiderRow({ rider, onUpdate }: Props) {
@@ -22,7 +20,7 @@ export function RiderRow({ rider, onUpdate }: Props) {
 
   return (
     <div
-      className={`grid items-center px-2 py-1.5 hover:bg-card/50 transition-colors text-xs ${inactive ? 'opacity-40' : ''}`}
+      className={`grid items-center px-2 py-0.5 hover:bg-card/50 transition-colors text-xs ${inactive ? 'opacity-40' : ''}`}
       style={{ gridTemplateColumns: '1fr 1fr 2.5rem 2.5rem 2.5rem 2.5rem 7rem 3rem 3rem' }}
     >
       {/* Name */}
@@ -31,26 +29,20 @@ export function RiderRow({ rider, onUpdate }: Props) {
       {/* Team */}
       <span className="text-gray-400 truncate pr-1" title={rider.team}>{rider.team}</span>
 
-      {/* Ratings */}
+      {/* Ratings — single compact colored input per column */}
       {RATINGS.map(attr => (
-        <div key={attr} className="flex flex-col items-center gap-0.5">
-          <RatingBadge value={rider[attr]} />
-          <input
-            type="number" min={0} max={100} step={1}
-            value={rider[attr]}
-            className="w-9 text-center text-[10px] bg-card border border-border rounded text-gray-300 focus:outline-none focus:border-amber-400/60 px-0.5"
-            onChange={e => onUpdate(rider.rider_id, { [attr]: Number(e.target.value) })}
-          />
-        </div>
+        <input
+          key={attr}
+          type="number" min={0} max={100} step={1}
+          value={rider[attr]}
+          className="w-9 text-center text-[10px] font-mono font-semibold bg-card border border-border rounded focus:outline-none focus:border-amber-400/60 px-0.5"
+          style={{ color: ratingColor(rider[attr]) }}
+          onChange={e => onUpdate(rider.rider_id, { [attr]: Number(e.target.value) })}
+        />
       ))}
 
       {/* Form slider */}
-      <div className="flex flex-col items-center gap-0.5 px-1">
-        <span className={`text-[10px] font-mono font-semibold ${
-          rider.form > 1.1 ? 'text-emerald-400' :
-          rider.form < 0.9 ? 'text-red-400' :
-          'text-gray-400'
-        }`}>{rider.form.toFixed(2)}</span>
+      <div className="flex items-center gap-1 px-1">
         <input
           type="range" min={0.5} max={1.5} step={0.05}
           value={rider.form}
@@ -58,6 +50,9 @@ export function RiderRow({ rider, onUpdate }: Props) {
           style={{ accentColor: rider.form < 0.85 ? '#f87171' : rider.form > 1.1 ? '#34d399' : '#f59e0b' }}
           onChange={e => onUpdate(rider.rider_id, { form: Number(e.target.value) })}
         />
+        <span className="text-[9px] font-mono w-6 text-right" style={{
+          color: rider.form > 1.1 ? '#34d399' : rider.form < 0.9 ? '#f87171' : '#9ca3af'
+        }}>{rider.form.toFixed(2)}</span>
       </div>
 
       {/* DNS */}

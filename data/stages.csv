@@ -1,22 +1,22 @@
 stage,start,finish,distance,type,key_climbs
-1,Florence,Rimini,206,flat,
-2,Cesenatico,Bologna,200,hilly,
-3,Piacenza,Turin,230,flat,
-4,Pinerolo,Valloire,139,mountain,"Col du Mont Cenis"
-5,Albertville,La Plagne,152,mountain,"Col de la Loze|La Plagne"
-6,Moutiers,Les Gets,193,hilly,
-7,Nantua,Gevrey-Chambertin,185,flat,
-8,Semur-en-Auxois,Troyes,168,flat,
-9,Troyes,Troyes,25,tt,
-10,Orleans,Saint-Amand-Montrond,161,flat,
-11,Bourges,Tulle,211,hilly,
-12,Auch,Hautacam,165,mountain,"Col du Tourmalet|Hautacam"
-13,Muret,Loudenvielle,165,mountain,"Col de Peyresourde|Loudenvielle"
-14,Pau,Luchon-Superbagneres,158,mountain,"Col d Aspin|Col de Peyresourde|Superbagneres"
-15,Luchon,Carcassonne,169,flat,
-16,Gruissan,Nimes,199,flat,
-17,Montpellier,Mont Ventoux,170,mountain,"Mont Ventoux"
-18,Avignon,Gap,174,hilly,
-19,Embrun,Isola 2000,144,mountain,"Col de la Cayolle|Isola 2000"
-20,Nice,Col de la Couillole,133,mountain,"Col de la Couillole"
-21,Monaco,Nice,33,tt,
+1,Barcelona,Barcelona,19.7,tt,
+2,Tarragona,Barcelona,178,hilly,
+3,Granollers,Les Angles,196,mountain,"Col de la Quillane|Col de Puymorens|Les Angles"
+4,Carcassonne,Foix,182,hilly,
+5,Lannemezan,Pau,158,flat,
+6,Pau,Gavarnie-Gedre,186,mountain,"Col d'Aubisque|Col du Tourmalet|Gavarnie"
+7,Hagetmau,Bordeaux,175,flat,
+8,Perigueux,Bergerac,182,flat,
+9,Malemort,Ussel,185,hilly,
+10,Aurillac,Le Lioran,167,mountain,"Puy Mary|Le Lioran"
+11,Vichy,Nevers,161,flat,
+12,Circuit de Nevers Magny-Cours,Chalon-sur-Saone,181,flat,
+13,Dole,Belfort,205,hilly,
+14,Mulhouse,Le Markstein Fellering,155,mountain,"Col du Platzerwasel|Grand Ballon|Le Markstein"
+15,Champagnole,Plateau de Solaison,184,mountain,"Col de la Colombiere|Plateau de Solaison"
+16,Evian-les-Bains,Thonon-les-Bains,26,tt,
+17,Chambery,Voiron,175,flat,
+18,Voiron,Orcieres-Merlette,185,mountain,"Col du Noyer|Orcieres-Merlette"
+19,Gap,Alpe d'Huez,128,mountain,"Col d'Ornon|Alpe d'Huez"
+20,Le Bourg-d'Oisans,Alpe d'Huez,171,mountain,"Col de la Croix de Fer|Col du Glandon|Alpe d'Huez"
+21,Thoiry,Paris Champs-Elysees,130,flat,
