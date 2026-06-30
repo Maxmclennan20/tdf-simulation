@@ -1,7 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 
 class StageType(str, Enum):
@@ -42,7 +41,7 @@ class RiderState:
     form: float = 1.0
     dns: bool = False
     dnf: bool = False
-    calibration_factor: float = 1.0
+    calibration_factor: float = 1.0  # set by apply_odds_calibration(); multiplies stage weight
 
     def is_active(self) -> bool:
         return not self.dns and not self.dnf
@@ -71,9 +70,9 @@ class RiderOdds:
     name: str
     team: str
     win_pct: float
-    podium_pct: Optional[float]
     decimal_odds: float
     fractional_odds: str
+    podium_pct: float | None = None
 
 
 @dataclass
