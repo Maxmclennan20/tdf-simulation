@@ -28,10 +28,10 @@ export function ControlsPanel({ riders, onUpdate, onRun, simState }: Props) {
   const activeCount = riders.filter(r => !r.dns && !r.dnf).length;
 
   return (
-    <div className="w-[500px] shrink-0 flex flex-col bg-panel border-r border-border overflow-hidden">
+    <div className="w-[620px] shrink-0 flex flex-col bg-panel border-r border-border overflow-hidden">
       {/* Panel header */}
-      <div className="px-4 py-3 border-b border-border">
-        <div className="flex items-center justify-between mb-3">
+      <div className="px-4 py-3 border-b border-border shrink-0">
+        <div className="flex items-center justify-between">
           <div>
             <h2 className="text-white text-sm font-semibold">Riders</h2>
             <p className="text-gray-500 text-xs">{activeCount} of {riders.length} active</p>
@@ -57,27 +57,30 @@ export function ControlsPanel({ riders, onUpdate, onRun, simState }: Props) {
             </button>
           </div>
         </div>
-
-        {/* Column headers */}
-        <div className="grid text-[10px] font-medium text-gray-500 uppercase tracking-wider px-2"
-             style={{ gridTemplateColumns: '1fr 1fr 2.5rem 2.5rem 2.5rem 2.5rem 7rem 3rem 3rem' }}>
-          <span>Name</span>
-          <span>Team</span>
-          <span className="text-center">SPR</span>
-          <span className="text-center">CLB</span>
-          <span className="text-center">TT</span>
-          <span className="text-center">GC</span>
-          <span className="text-center">Form</span>
-          <span className="text-center">DNS</span>
-          <span className="text-center">DNF</span>
-        </div>
       </div>
 
-      {/* Rider list */}
-      <div className="flex-1 overflow-y-auto divide-y divide-border/50">
-        {riders.map(r => (
-          <RiderRow key={r.rider_id} rider={r} onUpdate={onUpdate} />
-        ))}
+      {/* Rider table */}
+      <div className="flex-1 overflow-y-auto">
+        <table className="w-full border-collapse text-xs">
+          <thead className="sticky top-0 z-10 bg-panel">
+            <tr className="border-b border-border">
+              <th className="text-left py-2 pl-3 pr-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Name</th>
+              <th className="text-left py-2 px-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Team</th>
+              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-11">SPR</th>
+              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-11">CLB</th>
+              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-11">TT</th>
+              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-11">GC</th>
+              <th className="text-center py-2 px-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-14">Form</th>
+              <th className="text-center py-2 px-1 text-[10px] font-semibold text-red-500/70 uppercase tracking-wider w-10">DNS</th>
+              <th className="text-center py-2 px-1 text-[10px] font-semibold text-orange-500/70 uppercase tracking-wider w-10">DNF</th>
+            </tr>
+          </thead>
+          <tbody>
+            {riders.map(r => (
+              <RiderRow key={r.rider_id} rider={r} onUpdate={onUpdate} />
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
