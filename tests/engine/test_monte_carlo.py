@@ -25,7 +25,7 @@ def test_each_iteration_has_21_stage_results(sim_data):
     riders, stages = sim_data
     results = run_simulation(riders, stages, n_iterations=10, seed=2)
     for iteration in results:
-        assert len(iteration.stage_results) == 21
+        assert len(iteration.stage_results) == len(stages)
 
 
 def test_stage_winner_is_active_rider(sim_data):
@@ -76,8 +76,24 @@ def test_seeded_run_is_deterministic(sim_data):
     results_b = run_simulation(riders, stages, n_iterations=10, seed=42)
 
     for a, b in zip(results_a, results_b):
+        # Check GC winner matches
         gc_winner_a = min(a.gc_times, key=lambda rid: a.gc_times[rid])
         gc_winner_b = min(b.gc_times, key=lambda rid: b.gc_times[rid])
-        assert gc_winner_a == gc_winner_b, (
-            "Seeded runs must produce identical GC winner sequences"
-        )
+        assert gc_winner_a == gc_winner_b
+
+        # Check all stage winners match
+        for sr_a, sr_b in zip(a.stage_results, b.stage_results):
+            assert sr_a.winner_id == sr_b.winner_id
+
+
+def test_points_and_kom_scores_are_populated(sim_data):
+    riders, stages = sim_data
+    results = run_simulation(riders, stages, n_iterations=5, seed=7)
+    for iteration in results:
+        # At least one rider should have non-zero points (21 stages were run)
+        assert any(p > 0 for p in iteration.points_scores.values()), \
+            "points_scores should have non-zero entries after 21 stages"
+        # KOM scores: mountain stages have key_climbs, so at least some riders get KOM points
+        # (Not all iterations guaranteed non-zero if all stages are flat — just check keys exist)
+        assert set(iteration.kom_scores.keys()) == set(riders.keys()), \
+            "kom_scores must contain an entry for every rider"
