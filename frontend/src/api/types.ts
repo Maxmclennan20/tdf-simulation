@@ -38,9 +38,22 @@ export interface OddsRow {
   team: string;
   win_pct: number;
   podium_pct?: number;
+  top6_pct?: number;
+  top10_pct?: number;
+  top20_pct?: number;
+  top40_pct?: number;
   decimal_odds: number;
   fractional_odds: string;
   stage?: number;
+}
+
+export interface StageSummaryEntry {
+  stage: number;
+  type: 'flat' | 'hilly' | 'mountain' | 'tt';
+  finish: string;
+  distance: number;
+  key_climbs: string[];
+  top5: { rider_id: number; name: string; team: string; win_pct: number }[];
 }
 
 export interface JobStatus {

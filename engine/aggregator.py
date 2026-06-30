@@ -12,15 +12,23 @@ def aggregate_results(
     n = len(iterations)
     active = {rid: rs for rid, rs in riders.items() if rs.is_active()}
 
-    # --- GC win and podium counts ---
-    gc_wins: dict[int, int] = defaultdict(int)
-    gc_podium: dict[int, int] = defaultdict(int)
+    # --- GC finish position counts ---
+    gc_wins:   dict[int, int] = defaultdict(int)
+    gc_top3:   dict[int, int] = defaultdict(int)
+    gc_top6:   dict[int, int] = defaultdict(int)
+    gc_top10:  dict[int, int] = defaultdict(int)
+    gc_top20:  dict[int, int] = defaultdict(int)
+    gc_top40:  dict[int, int] = defaultdict(int)
     for it in iterations:
         ranked = sorted(it.gc_times.items(), key=lambda x: x[1])
         if ranked:
             gc_wins[ranked[0][0]] += 1
-        for rid, _ in ranked[:3]:
-            gc_podium[rid] += 1
+        for pos, (rid, _) in enumerate(ranked, 1):
+            if pos <= 3:  gc_top3[rid]  += 1
+            if pos <= 6:  gc_top6[rid]  += 1
+            if pos <= 10: gc_top10[rid] += 1
+            if pos <= 20: gc_top20[rid] += 1
+            if pos <= 40: gc_top40[rid] += 1
 
     # --- Stage win counts ---
     stage_wins: dict[int, dict[int, int]] = {s: defaultdict(int) for s in stages}
@@ -59,18 +67,37 @@ def aggregate_results(
             ))
         return sorted(results, key=lambda x: -x.win_pct)
 
-    gc_odds = to_odds(gc_wins)
-
-    # GC podium odds (with both win_pct and podium_pct)
-    gc_podium_odds = []
-    for r in gc_odds:
-        pod_count = gc_podium.get(r.rider_id, 0)
-        pod_pct = round(pod_count / n, 4) if n > 0 else 0.0
-        gc_podium_odds.append(RiderOdds(
-            rider_id=r.rider_id, name=r.name, team=r.team,
-            win_pct=r.win_pct, podium_pct=pod_pct,
-            decimal_odds=r.decimal_odds, fractional_odds=r.fractional_odds,
+    # GC win odds with all finish-position percentages attached
+    gc_odds = []
+    for rid, rs in active.items():
+        win_count = gc_wins.get(rid, 0)
+        p = win_count / n if n > 0 else 0.0
+        dec = probability_to_decimal(p)
+        gc_odds.append(RiderOdds(
+            rider_id=rid,
+            name=rs.rider.name,
+            team=rs.rider.team,
+            win_pct=round(p, 4),
+            decimal_odds=dec,
+            fractional_odds=decimal_to_fractional(dec),
+            podium_pct=round(gc_top3.get(rid, 0) / n, 4) if n > 0 else 0.0,
+            top6_pct=round(gc_top6.get(rid, 0) / n, 4) if n > 0 else 0.0,
+            top10_pct=round(gc_top10.get(rid, 0) / n, 4) if n > 0 else 0.0,
+            top20_pct=round(gc_top20.get(rid, 0) / n, 4) if n > 0 else 0.0,
+            top40_pct=round(gc_top40.get(rid, 0) / n, 4) if n > 0 else 0.0,
         ))
+    gc_odds.sort(key=lambda x: -x.win_pct)
+
+    # GC podium odds (sorted by top-3 %)
+    gc_podium_odds = sorted(
+        [RiderOdds(
+            rider_id=r.rider_id, name=r.name, team=r.team,
+            win_pct=r.win_pct, podium_pct=r.podium_pct,
+            decimal_odds=probability_to_decimal(r.podium_pct or 0),
+            fractional_odds=decimal_to_fractional(probability_to_decimal(r.podium_pct or 0)),
+        ) for r in gc_odds],
+        key=lambda x: -(x.podium_pct or 0),
+    )
 
     stages_odds = {s: to_odds(stage_wins[s]) for s in stages}
 

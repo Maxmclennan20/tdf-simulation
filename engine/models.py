@@ -72,7 +72,11 @@ class RiderOdds:
     win_pct: float
     decimal_odds: float
     fractional_odds: str
-    podium_pct: float | None = None
+    podium_pct: float | None = None   # top-3
+    top6_pct: float | None = None
+    top10_pct: float | None = None
+    top20_pct: float | None = None
+    top40_pct: float | None = None
 
 
 @dataclass

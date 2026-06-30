@@ -1,4 +1,4 @@
-import type { Rider, RiderUpdate, Stage, OddsRow, JobStatus, H2HResult } from './types';
+import type { Rider, RiderUpdate, Stage, OddsRow, JobStatus, H2HResult, StageSummaryEntry } from './types';
 
 const BASE = 'http://localhost:8000';
 
@@ -35,6 +35,8 @@ export const api = {
     const params = stage != null ? `?stage=${stage}` : '';
     return `${BASE}/export/${jobId}/${market}${params}`;
   },
+  getStageSummary: (jobId: string) =>
+    apiFetch<StageSummaryEntry[]>(`/results/${jobId}/stage_summary`),
   importOdds: (file: File) => {
     const form = new FormData();
     form.append('file', file);

@@ -13,8 +13,11 @@ const COL_LABELS: Record<string, string> = {
   team: 'Team',
   win_pct: 'Win %',
   decimal_odds: 'Decimal',
-  fractional_odds: 'Fractional',
-  podium_pct: 'Podium %',
+  podium_pct: 'Top 3 %',
+  top6_pct: 'Top 6 %',
+  top10_pct: 'Top 10 %',
+  top20_pct: 'Top 20 %',
+  top40_pct: 'Top 40 %',
   stage: 'Stage',
 };
 
@@ -44,7 +47,7 @@ export function OddsTable({ rows, extraColumns = [] }: Props) {
     else { setSortKey(key); setDir('desc'); }
   };
 
-  const allCols = ['name', 'team', 'win_pct', 'decimal_odds', 'fractional_odds',
+  const allCols = ['name', 'team', 'win_pct', 'decimal_odds',
     ...extraColumns.map(c => c.key)];
 
   const SortIcon = ({ col }: { col: string }) => {
@@ -101,7 +104,7 @@ export function OddsTable({ rows, extraColumns = [] }: Props) {
                   <ProbBar pct={row.win_pct} />
                 </td>
                 <td className="px-3 py-2 font-mono text-sm text-gray-200">{row.decimal_odds}</td>
-                <td className="px-3 py-2 font-mono text-xs text-amber-400/80">{row.fractional_odds}</td>
+
                 {extraColumns.map(c => (
                   <td key={c.key} className="px-3 py-2 text-gray-300 text-xs">
                     {c.key.includes('pct')

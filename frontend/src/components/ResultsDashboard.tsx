@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import type { OddsRow } from '../api/types';
+import type { OddsRow, StageSummaryEntry } from '../api/types';
 import { OddsTable } from './OddsTable';
+import { StageSummaryView } from './StageSummaryView';
 import { DownloadButton } from './DownloadButton';
+import { api } from '../api/client';
 
-type Tab = 'gc' | 'gc_podium' | 'stages' | 'points_jersey' | 'kom' | 'young_rider' | 'head_to_head';
+type Tab = 'gc' | 'gc_podium' | 'stage_summary' | 'stages' | 'points_jersey' | 'kom' | 'young_rider' | 'head_to_head';
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'gc', label: 'GC' },
   { key: 'gc_podium', label: 'Podium' },
-  { key: 'stages', label: 'Stage Wins' },
+  { key: 'stage_summary', label: 'Stage Summary' },
+  { key: 'stages', label: 'Stage Win Odds' },
   { key: 'points_jersey', label: 'Points' },
   { key: 'kom', label: 'KOM' },
   { key: 'young_rider', label: 'Young Rider' },
@@ -32,11 +35,23 @@ export function ResultsDashboard({ simComplete, getResults, getExportUrl }: Prop
   const [activeTab, setActiveTab] = useState<Tab>('gc');
   const [rows, setRows] = useState<OddsRow[]>([]);
   const [h2hRows, setH2hRows] = useState<H2HRow[]>([]);
+  const [stageSummary, setStageSummary] = useState<StageSummaryEntry[]>([]);
   const [selectedStage, setSelectedStage] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
+  // Extract job ID from the export URL (reuses existing hook without needing a new prop)
+  const jobId = simComplete ? getExportUrl('gc').split('/export/')[1]?.split('/')[0] : null;
+
   useEffect(() => {
-    if (!simComplete) return;
+    if (!simComplete || !jobId) return;
+    if (activeTab === 'stage_summary') {
+      setLoading(true);
+      api.getStageSummary(jobId)
+        .then(setStageSummary)
+        .catch(() => setStageSummary([]))
+        .finally(() => setLoading(false));
+      return;
+    }
     setLoading(true);
     if (activeTab === 'head_to_head') {
       getResults('head_to_head')
@@ -50,7 +65,7 @@ export function ResultsDashboard({ simComplete, getResults, getExportUrl }: Prop
         .catch(() => setRows([]))
         .finally(() => setLoading(false));
     }
-  }, [simComplete, activeTab, selectedStage, getResults]);
+  }, [simComplete, activeTab, selectedStage, getResults, jobId]);
 
   if (!simComplete) {
     return (
@@ -108,7 +123,7 @@ export function ResultsDashboard({ simComplete, getResults, getExportUrl }: Prop
           )}
           {loading && <span className="text-xs text-gray-500 animate-pulse">Loading…</span>}
         </div>
-        {activeTab !== 'head_to_head' && (
+        {activeTab !== 'head_to_head' && activeTab !== 'stage_summary' && (
           <DownloadButton
             url={getExportUrl(activeTab, activeTab === 'stages' ? selectedStage : undefined)}
             label={`Export ${TABS.find(t => t.key === activeTab)?.label} CSV`}
@@ -120,12 +135,22 @@ export function ResultsDashboard({ simComplete, getResults, getExportUrl }: Prop
       <div className="flex-1 overflow-y-auto p-4">
         {activeTab === 'head_to_head' ? (
           <HeadToHeadView rows={h2hRows} />
+        ) : activeTab === 'stage_summary' ? (
+          <StageSummaryView stages={stageSummary} />
         ) : (
           <OddsTable
             rows={rows}
             extraColumns={
-              activeTab === 'gc_podium'
-                ? [{ key: 'podium_pct', label: 'Podium %' }]
+              activeTab === 'gc'
+                ? [
+                    { key: 'podium_pct', label: 'Top 3 %' },
+                    { key: 'top6_pct', label: 'Top 6 %' },
+                    { key: 'top10_pct', label: 'Top 10 %' },
+                    { key: 'top20_pct', label: 'Top 20 %' },
+                    { key: 'top40_pct', label: 'Top 40 %' },
+                  ]
+                : activeTab === 'gc_podium'
+                ? [{ key: 'podium_pct', label: 'Top 3 %' }]
                 : activeTab === 'stages' && selectedStage != null
                 ? [{ key: 'stage', label: 'Stage' }]
                 : []

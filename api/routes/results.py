@@ -7,7 +7,8 @@ from api.state import app_state, JobStatus
 router = APIRouter()
 
 VALID_MARKETS = {"gc", "gc_podium", "stages", "stages_all",
-                 "points_jersey", "kom", "young_rider", "head_to_head"}
+                 "points_jersey", "kom", "young_rider", "head_to_head",
+                 "stage_summary"}
 
 
 class OddsRow(BaseModel):
@@ -59,3 +60,22 @@ def get_results(job_id: str, market: str, stage: Optional[int] = None):
             {"rider1_id": k[0], "rider2_id": k[1], "p1": v[0], "p2": v[1]}
             for k, v in res.head_to_head.items()
         ]
+    if market == "stage_summary":
+        stages = app_state.stages
+        summary = []
+        for stage_num in sorted(stages.keys()):
+            stage = stages[stage_num]
+            stage_odds = res.stages.get(stage_num, [])
+            top5 = [
+                {"rider_id": r.rider_id, "name": r.name, "team": r.team, "win_pct": r.win_pct}
+                for r in stage_odds[:5]
+            ]
+            summary.append({
+                "stage": stage_num,
+                "type": stage.type,
+                "finish": stage.finish,
+                "distance": stage.distance,
+                "key_climbs": stage.key_climbs,
+                "top5": top5,
+            })
+        return summary
