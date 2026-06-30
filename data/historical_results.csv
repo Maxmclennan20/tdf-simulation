@@ -1,0 +1,16 @@
+rider_id,race,year,stage_type,finish_position,time_gap_seconds
+1,TdF,2024,mountain,1,0
+1,TdF,2024,mountain,1,0
+2,TdF,2024,mountain,2,45
+1,TdF,2024,tt,1,0
+2,TdF,2024,tt,2,18
+3,TdF,2024,tt,1,0
+1,TdF,2023,mountain,1,0
+2,TdF,2023,mountain,1,0
+7,TdF,2023,tt,1,0
+1,Giro,2024,mountain,1,0
+4,Giro,2024,mountain,2,52
+5,Giro,2024,mountain,3,78
+2,TdF,2022,mountain,1,0
+1,TdF,2022,mountain,2,130
+7,TdF,2022,tt,1,0

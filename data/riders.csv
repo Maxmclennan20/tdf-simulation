@@ -1,0 +1,16 @@
+rider_id,name,team,nationality,birth_year,uci_ranking,young_rider_eligible
+1,Tadej Pogacar,UAE Team Emirates,SVN,2000,1,false
+2,Jonas Vingegaard,Visma-Lease a Bike,DEN,1996,2,false
+3,Remco Evenepoel,Soudal Quick-Step,BEL,2000,3,false
+4,Carlos Rodriguez,Ineos Grenadiers,ESP,2001,8,false
+5,Juan Ayuso,UAE Team Emirates,ESP,2002,15,false
+6,Egan Bernal,Ineos Grenadiers,COL,1997,22,false
+7,Primoz Roglic,Red Bull Bora Hansgrohe,SVN,1989,5,false
+8,Enric Mas,Movistar,ESP,1995,18,false
+9,Felix Gall,AG2R Citroen,AUT,1998,30,false
+10,Lenny Martinez,Groupama-FDJ,FRA,2002,45,false
+11,Mark Cavendish,Astana Qazaqstan,GBR,1985,120,false
+12,Jasper Philipsen,Alpecin-Deceuninck,BEL,1998,25,false
+13,Wout van Aert,Visma-Lease a Bike,BEL,1994,10,false
+14,Mads Pedersen,Lidl-Trek,DEN,1995,20,false
+15,Tom Pidcock,Ineos Grenadiers,GBR,1999,35,false
