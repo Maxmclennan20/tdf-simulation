@@ -38,39 +38,47 @@ def load_all_data(data_dir: Path) -> tuple[
     # Build RiderState objects
     ratings_map = ratings_df.set_index("rider_id").to_dict("index")
     riders: dict[int, RiderState] = {}
-    for _, row in riders_df.iterrows():
-        rid = int(row["rider_id"])
-        r = Rider(
-            rider_id=rid,
-            name=row["name"],
-            team=row["team"],
-            nationality=row["nationality"],
-            birth_year=int(row["birth_year"]),
-            uci_ranking=int(row["uci_ranking"]),
-            young_rider_eligible=str(row["young_rider_eligible"]).lower() == "true",
-        )
-        rat = ratings_map.get(rid, {})
-        riders[rid] = RiderState(
-            rider=r,
-            sprint=float(rat.get("sprint", 50)),
-            climbing=float(rat.get("climbing", 50)),
-            tt=float(rat.get("tt", 50)),
-            gc=float(rat.get("gc", 50)),
-        )
+    try:
+        for _, row in riders_df.iterrows():
+            rid = int(row["rider_id"])
+            if rid in riders:
+                raise DataLoadError(f"Duplicate rider_id {rid} in riders.csv")
+            r = Rider(
+                rider_id=rid,
+                name=row["name"],
+                team=row["team"],
+                nationality=row["nationality"],
+                birth_year=int(row["birth_year"]),
+                uci_ranking=int(row["uci_ranking"]),
+                young_rider_eligible=str(row["young_rider_eligible"]).lower() == "true",
+            )
+            rat = ratings_map.get(rid, {})
+            riders[rid] = RiderState(
+                rider=r,
+                sprint=float(rat.get("sprint", 50)),
+                climbing=float(rat.get("climbing", 50)),
+                tt=float(rat.get("tt", 50)),
+                gc=float(rat.get("gc", 50)),
+            )
+    except (ValueError, KeyError) as e:
+        raise DataLoadError(f"Invalid data in riders/ratings CSV: {e}") from e
 
     # Build Stage objects
     stages: dict[int, Stage] = {}
-    for _, row in stages_df.iterrows():
-        climbs_raw = str(row.get("key_climbs", "")) if pd.notna(row.get("key_climbs")) else ""
-        climbs = [c.strip() for c in climbs_raw.split("|") if c.strip()]
-        stages[int(row["stage"])] = Stage(
-            stage=int(row["stage"]),
-            start=row["start"],
-            finish=row["finish"],
-            distance=float(row["distance"]),
-            type=StageType(row["type"]),
-            key_climbs=climbs,
-        )
+    try:
+        for _, row in stages_df.iterrows():
+            climbs_raw = str(row.get("key_climbs", "")) if pd.notna(row.get("key_climbs")) else ""
+            climbs = [c.strip() for c in climbs_raw.split("|") if c.strip()]
+            stages[int(row["stage"])] = Stage(
+                stage=int(row["stage"]),
+                start=row["start"],
+                finish=row["finish"],
+                distance=float(row["distance"]),
+                type=StageType(row["type"]),
+                key_climbs=climbs,
+            )
+    except (ValueError, KeyError) as e:
+        raise DataLoadError(f"Invalid data in stages CSV: {e}") from e
 
     # Build odds lookup
     odds: dict[int, dict[str, float]] = {}
