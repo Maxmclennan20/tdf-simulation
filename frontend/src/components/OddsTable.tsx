@@ -44,7 +44,7 @@ export function OddsTable({ rows, extraColumns = [] }: Props) {
             <td style={{ padding: '3px 8px' }}>{row.fractional_odds}</td>
             {extraColumns.map(c => (
               <td key={c.key} style={{ padding: '3px 8px' }}>
-                {String((row as Record<string, unknown>)[c.key] ?? '')}
+                {String((row as unknown as Record<string, unknown>)[c.key] ?? '')}
               </td>
             ))}
           </tr>
