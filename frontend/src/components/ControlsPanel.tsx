@@ -6,11 +6,9 @@ import { api } from '../api/client';
 interface Props {
   riders: Rider[];
   onUpdate: (id: number, update: RiderUpdate) => void;
-  onRun: () => void;
-  simState: 'idle' | 'running' | 'complete' | 'error';
 }
 
-export function ControlsPanel({ riders, onUpdate, onRun, simState }: Props) {
+export function ControlsPanel({ riders, onUpdate }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,14 +26,11 @@ export function ControlsPanel({ riders, onUpdate, onRun, simState }: Props) {
   const activeCount = riders.filter(r => !r.dns && !r.dnf).length;
 
   return (
-    <div className="w-[620px] shrink-0 flex flex-col bg-panel border-r border-border overflow-hidden">
+    <div className="flex flex-col h-full bg-panel overflow-hidden">
       {/* Panel header */}
       <div className="px-4 py-3 border-b border-border shrink-0">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-white text-sm font-semibold">Riders</h2>
-            <p className="text-gray-500 text-xs">{activeCount} of {riders.length} active</p>
-          </div>
+          <p className="text-gray-500 text-xs">{activeCount} of {riders.length} active</p>
           <div className="flex gap-2">
             <button
               onClick={() => fileRef.current?.click()}
@@ -44,17 +39,6 @@ export function ControlsPanel({ riders, onUpdate, onRun, simState }: Props) {
               Import Odds CSV
             </button>
             <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleImport} />
-            <button
-              onClick={onRun}
-              disabled={simState === 'running'}
-              className={`px-4 py-1.5 text-xs rounded font-semibold transition-all ${
-                simState === 'running'
-                  ? 'bg-amber-900/40 text-amber-600 cursor-not-allowed'
-                  : 'bg-amber-400 text-black hover:bg-amber-300 active:scale-95'
-              }`}
-            >
-              {simState === 'running' ? 'Running…' : 'Run Simulation'}
-            </button>
           </div>
         </div>
       </div>
