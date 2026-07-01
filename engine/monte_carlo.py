@@ -1,6 +1,8 @@
 """Monte Carlo simulation runner for the Tour de France 2026."""
 from __future__ import annotations
 
+from collections import defaultdict
+
 import numpy as np
 
 from engine.models import IterationResult, StageResult, RiderState, Stage
@@ -14,6 +16,79 @@ from engine.time_gaps import generate_time_gaps
 
 # Used by aggregator to identify young rider jersey contenders
 YOUNG_RIDER_BIRTH_YEAR = 2001  # UCI rule: under 26 on 1 Jan 2026 → born on/after 1 Jan 2001
+
+
+def _simulate_ttt_stage(
+    riders: dict[int, RiderState],
+    stage: Stage,
+    rng: np.random.Generator,
+) -> tuple[int, dict[int, float], dict[int, int], dict[int, int]]:
+    """Simulate a Team Time Trial.
+
+    All riders from the same team share the same cumulative time gap.
+    Team finishing order is drawn using a Plackett-Luce model weighted by
+    each team's mean TT performance score (including ttt_team_factor).
+    Inter-team gaps follow a log-normal distribution (~7-15 s per step).
+    """
+    active_ids = [rid for rid in riders if riders[rid].is_active()]
+
+    # Group active riders by team
+    teams: dict[str, list[int]] = defaultdict(list)
+    for rid in active_ids:
+        teams[riders[rid].rider.team].append(rid)
+
+    team_names = list(teams.keys())
+
+    # Compute each team's mean TT performance weight
+    team_raw: dict[str, float] = {}
+    for team_name in team_names:
+        rids = teams[team_name]
+        weights = [
+            (riders[rid].tt * 0.80 + riders[rid].gc * 0.20) * riders[rid].form * riders[rid].ttt_team_factor
+            for rid in rids
+        ]
+        team_raw[team_name] = float(np.mean(weights)) if weights else 1.0
+
+    # Draw team finishing order using the Gumbel-max trick (equivalent to
+    # Plackett-Luce but fully vectorised: O(n log n) instead of O(n²)).
+    # log(score_i) + Gumbel(0,1) is equivalent to sequential weighted draws.
+    scores_arr = np.array([team_raw[t] for t in team_names], dtype=float)
+    scores_arr = np.clip(scores_arr, 1e-9, None)  # avoid log(0)
+    gumbel_noise = rng.gumbel(loc=0.0, scale=1.0, size=len(team_names))
+    noisy_log_scores = np.log(scores_arr) + gumbel_noise
+    ordered_idx = np.argsort(-noisy_log_scores)  # descending
+    ordered_teams = [team_names[int(i)] for i in ordered_idx]
+
+    winner_team = ordered_teams[0]
+    # Stage winner = rider with highest TT rating from winning team
+    winner_id = max(teams[winner_team], key=lambda rid: riders[rid].tt)
+
+    # Cumulative inter-team time gaps (log-normal, ~7-15 s per consecutive team)
+    gap_samples = rng.lognormal(mean=2.0, sigma=0.6, size=max(len(ordered_teams) - 1, 1))
+    team_gaps: dict[str, float] = {ordered_teams[0]: 0.0}
+    cumulative_gap = 0.0
+    for i, team_name in enumerate(ordered_teams[1:]):
+        cumulative_gap += float(gap_samples[i])
+        team_gaps[team_name] = cumulative_gap
+
+    # Assign individual gaps (all team members share their team's gap)
+    all_gaps: dict[int, float] = {}
+    for rid in riders:
+        if riders[rid].is_active():
+            team = riders[rid].rider.team
+            all_gaps[rid] = team_gaps.get(team, cumulative_gap)
+        else:
+            all_gaps[rid] = 0.0
+
+    # Stage points: one representative per team position (highest TT rider)
+    stage_points: dict[int, int] = {}
+    for pos, team_name in enumerate(ordered_teams, start=1):
+        pts = TDF_POINTS_SCALE.get(pos, 0)
+        if pts > 0:
+            rep = max(teams[team_name], key=lambda rid: riders[rid].tt)
+            stage_points[rep] = pts
+
+    return winner_id, all_gaps, stage_points, {}
 
 
 def _simulate_one_stage(
@@ -30,6 +105,9 @@ def _simulate_one_stage(
     - stage_points: top-15 finishers get TDF_POINTS_SCALE points (position -> points)
     - kom_points: for each key_climb, stage winner gets KOM_POINTS["HC"][1] = 20 pts
     """
+    if stage.is_ttt:
+        return _simulate_ttt_stage(riders, stage, rng)
+
     stage_type = stage.type
 
     # Build probability weights over active riders only

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections import defaultdict
 from engine.models import RiderState, StageType
 from engine.config import STAGE_FACTORS, STAGE_RATING_MAP
 
@@ -74,3 +75,58 @@ def apply_odds_calibration(
             setattr(rs, target_field, p_market[rid] / p_model_rid if p_model_rid > 0 else 1.0)
         else:
             setattr(rs, target_field, 1.0)
+
+
+def apply_ttt_calibration(
+    riders: dict[int, RiderState],
+    team_ttt_odds: dict[str, float],
+) -> None:
+    """
+    Set ttt_team_factor for every rider based on team TTT market odds.
+    Algorithm mirrors apply_odds_calibration but operates at team level.
+      1. p_market[team] = (1/decimal_odds), normalised over teams with odds
+      2. p_model[team] = mean raw TT weight for that team, normalised over same teams
+      3. ttt_team_factor = p_market / p_model (1.0 for teams with no odds)
+    """
+    # Group active riders by team
+    team_riders: dict[str, list[int]] = defaultdict(list)
+    for rid, rs in riders.items():
+        if rs.is_active():
+            team_riders[rs.rider.team].append(rid)
+
+    # Teams without market odds are extreme longshots — treat as 1001.0 odds
+    # so they don't absorb probability from the rated teams.
+    DEFAULT_UNRATED_ODDS = 1001.0
+
+    # Market probabilities across ALL active teams (rated + unrated)
+    market_raw: dict[str, float] = {}
+    for team_name in team_riders:
+        if team_name in team_ttt_odds:
+            market_raw[team_name] = 1.0 / team_ttt_odds[team_name]
+        else:
+            market_raw[team_name] = 1.0 / DEFAULT_UNRATED_ODDS
+
+    total_market = sum(market_raw.values())
+    if total_market == 0:
+        return
+    p_market = {team: v / total_market for team, v in market_raw.items()}
+
+    # Model probabilities (raw TT weight per team, normalised over ALL teams)
+    model_raw: dict[str, float] = {}
+    for team_name, rids in team_riders.items():
+        weights = [
+            (riders[rid].tt * 0.80 + riders[rid].gc * 0.20) * riders[rid].form
+            for rid in rids
+        ]
+        model_raw[team_name] = sum(weights) / len(weights) if weights else 1.0
+
+    total_model = sum(model_raw.values())
+    p_model = {team: v / total_model for team, v in model_raw.items()}
+
+    # Apply factors to all active riders
+    for team_name, rids in team_riders.items():
+        pm = p_market.get(team_name, 0.0)
+        pmod = p_model.get(team_name, 0.0)
+        factor = pm / pmod if pmod > 0 else 1.0
+        for rid in rids:
+            riders[rid].ttt_team_factor = factor

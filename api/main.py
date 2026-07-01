@@ -8,9 +8,9 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from api.state import app_state
 from api.routes import riders, stages, simulate, results, export, odds
-from engine.data_loader import load_all_data
+from engine.data_loader import load_all_data, load_team_ttt_odds
 from engine.models import StageType
-from engine.performance_model import apply_odds_calibration
+from engine.performance_model import apply_odds_calibration, apply_ttt_calibration
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
@@ -21,6 +21,9 @@ async def lifespan(app: FastAPI):
     app_state.riders = r
     app_state.stages = s
     app_state.odds = o
+    # TTT team calibration (Stage 1) — before any individual odds calibration
+    team_ttt_odds = load_team_ttt_odds(DATA_DIR)
+    apply_ttt_calibration(r, team_ttt_odds)
     # Young rider win odds first (while calibration_factor is still 1.0 = base ratings)
     # This ensures young_rider_calibration_factor reflects raw rating comparisons, not GC-inflated ones
     apply_odds_calibration(app_state.riders, app_state.odds,

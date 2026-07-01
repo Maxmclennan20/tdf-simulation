@@ -29,6 +29,7 @@ class Stage:
     distance: float
     type: StageType
     key_climbs: list[str] = field(default_factory=list)
+    is_ttt: bool = False
 
 
 @dataclass
@@ -44,6 +45,7 @@ class RiderState:
     calibration_factor: float = 1.0               # GC odds calibration — applied on mountain/TT
     stage_calibration_factor: float = 1.0         # stage win odds calibration — applied on flat/hilly
     young_rider_calibration_factor: float = 1.0   # young rider odds calibration — post-GC ranking adjustment
+    ttt_team_factor: float = 1.0                  # TTT team odds calibration — applied on TTT stages
 
     def is_active(self) -> bool:
         return not self.dns and not self.dnf

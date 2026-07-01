@@ -8,6 +8,15 @@ class DataLoadError(Exception):
     pass
 
 
+def load_team_ttt_odds(data_dir: Path) -> dict[str, float]:
+    """Load team TTT odds from team_ttt_odds.csv. Returns {team_name: decimal_odds}."""
+    path = data_dir / "team_ttt_odds.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    return {str(row["team_name"]): float(row["decimal_odds"]) for _, row in df.iterrows()}
+
+
 def load_all_data(data_dir: Path) -> tuple[
     dict[int, RiderState],
     dict[int, Stage],
@@ -69,6 +78,8 @@ def load_all_data(data_dir: Path) -> tuple[
         for _, row in stages_df.iterrows():
             climbs_raw = str(row.get("key_climbs", "")) if pd.notna(row.get("key_climbs")) else ""
             climbs = [c.strip() for c in climbs_raw.split("|") if c.strip()]
+            is_ttt_raw = row.get("is_ttt", False)
+            is_ttt = str(is_ttt_raw).strip().lower() == "true" if pd.notna(is_ttt_raw) else False
             stages[int(row["stage"])] = Stage(
                 stage=int(row["stage"]),
                 start=row["start"],
@@ -76,6 +87,7 @@ def load_all_data(data_dir: Path) -> tuple[
                 distance=float(row["distance"]),
                 type=StageType(row["type"]),
                 key_climbs=climbs,
+                is_ttt=is_ttt,
             )
     except (ValueError, KeyError) as e:
         raise DataLoadError(f"Invalid data in stages CSV: {e}") from e

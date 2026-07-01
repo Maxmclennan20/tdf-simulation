@@ -1,22 +1,22 @@
-stage,start,finish,distance,type,key_climbs
-1,Barcelona,Barcelona,19.7,tt,
-2,Tarragona,Barcelona,178,hilly,
-3,Granollers,Les Angles,196,mountain,"Col de la Quillane|Col de Puymorens|Les Angles"
-4,Carcassonne,Foix,182,hilly,
-5,Lannemezan,Pau,158,flat,
-6,Pau,Gavarnie-Gedre,186,mountain,"Col d'Aubisque|Col du Tourmalet|Gavarnie"
-7,Hagetmau,Bordeaux,175,flat,
-8,Perigueux,Bergerac,182,flat,
-9,Malemort,Ussel,185,hilly,
-10,Aurillac,Le Lioran,167,mountain,"Puy Mary|Le Lioran"
-11,Vichy,Nevers,161,flat,
-12,Circuit de Nevers Magny-Cours,Chalon-sur-Saone,181,flat,
-13,Dole,Belfort,205,hilly,
-14,Mulhouse,Le Markstein Fellering,155,mountain,"Col du Platzerwasel|Grand Ballon|Le Markstein"
-15,Champagnole,Plateau de Solaison,184,mountain,"Col de la Colombiere|Plateau de Solaison"
-16,Evian-les-Bains,Thonon-les-Bains,26,tt,
-17,Chambery,Voiron,175,flat,
-18,Voiron,Orcieres-Merlette,185,mountain,"Col du Noyer|Orcieres-Merlette"
-19,Gap,Alpe d'Huez,128,mountain,"Col d'Ornon|Alpe d'Huez"
-20,Le Bourg-d'Oisans,Alpe d'Huez,171,mountain,"Col de la Croix de Fer|Col du Glandon|Alpe d'Huez"
-21,Thoiry,Paris Champs-Elysees,130,flat,
+stage,start,finish,distance,type,key_climbs,is_ttt
+1,Barcelona,Barcelona,19.7,tt,,true
+2,Tarragona,Barcelona,178,hilly,,false
+3,Granollers,Les Angles,196,mountain,"Col de la Quillane|Col de Puymorens|Les Angles",false
+4,Carcassonne,Foix,182,hilly,,false
+5,Lannemezan,Pau,158,flat,,false
+6,Pau,Gavarnie-Gedre,186,mountain,"Col d'Aubisque|Col du Tourmalet|Gavarnie",false
+7,Hagetmau,Bordeaux,175,flat,,false
+8,Perigueux,Bergerac,182,flat,,false
+9,Malemort,Ussel,185,hilly,,false
+10,Aurillac,Le Lioran,167,mountain,"Puy Mary|Le Lioran",false
+11,Vichy,Nevers,161,flat,,false
+12,Circuit de Nevers Magny-Cours,Chalon-sur-Saone,181,flat,,false
+13,Dole,Belfort,205,hilly,,false
+14,Mulhouse,Le Markstein Fellering,155,mountain,"Col du Platzerwasel|Grand Ballon|Le Markstein",false
+15,Champagnole,Plateau de Solaison,184,mountain,"Col de la Colombiere|Plateau de Solaison",false
+16,Evian-les-Bains,Thonon-les-Bains,26,tt,,false
+17,Chambery,Voiron,175,flat,,false
+18,Voiron,Orcieres-Merlette,185,mountain,"Col du Noyer|Orcieres-Merlette",false
+19,Gap,Alpe d'Huez,128,mountain,"Col d'Ornon|Alpe d'Huez",false
+20,Le Bourg-d'Oisans,Alpe d'Huez,171,mountain,"Col de la Croix de Fer|Col du Glandon|Alpe d'Huez",false
+21,Thoiry,Paris Champs-Elysees,130,flat,,false
