@@ -89,21 +89,20 @@ function App() {
         </div>
       </header>
 
-      {/* Body — both panels always mounted, only one visible */}
+      {/* Body */}
       <div className="flex-1 overflow-hidden relative">
-        <div className={`absolute inset-0 ${activeTab === 'riders' ? 'block' : 'hidden'}`}>
+        {activeTab === 'riders' ? (
           <ControlsPanel
             riders={riders}
             onUpdate={updateRider}
           />
-        </div>
-        <div className={`absolute inset-0 ${activeTab === 'results' ? 'block' : 'hidden'}`}>
+        ) : (
           <ResultsDashboard
             simComplete={state === 'complete'}
             getResults={getResults as (market: string, stage?: number) => Promise<OddsRow[]>}
             getExportUrl={getExportUrl}
           />
-        </div>
+        )}
       </div>
     </div>
   );
