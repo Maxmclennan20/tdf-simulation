@@ -17,6 +17,42 @@ def load_team_ttt_odds(data_dir: Path) -> dict[str, float]:
     return {str(row["team_name"]): float(row["decimal_odds"]) for _, row in df.iterrows()}
 
 
+def load_uci_rankings(data_dir: Path) -> dict[int, float]:
+    """Load UCI GC ranking points. Returns {rider_id: gc_pts}."""
+    path = data_dir / "uci_rankings.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    return {int(row["rider_id"]): float(row["gc_pts"]) for _, row in df.iterrows()}
+
+
+def load_climb_rankings(data_dir: Path) -> dict[int, float]:
+    """Load UCI climbers ranking points. Returns {rider_id: climb_pts}."""
+    path = data_dir / "climb_rankings.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    return {int(row["rider_id"]): float(row["climb_pts"]) for _, row in df.iterrows()}
+
+
+def load_sprint_rankings(data_dir: Path) -> dict[int, float]:
+    """Load UCI sprinters ranking points. Returns {rider_id: sprint_pts}."""
+    path = data_dir / "sprint_rankings.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    return {int(row["rider_id"]): float(row["sprint_pts"]) for _, row in df.iterrows()}
+
+
+def load_classics_rankings(data_dir: Path) -> dict[int, float]:
+    """Load UCI one-day specialists ranking points. Returns {rider_id: classics_pts}."""
+    path = data_dir / "classics_rankings.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    return {int(row["rider_id"]): float(row["classics_pts"]) for _, row in df.iterrows()}
+
+
 def load_all_data(data_dir: Path) -> tuple[
     dict[int, RiderState],
     dict[int, Stage],

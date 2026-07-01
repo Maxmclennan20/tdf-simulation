@@ -8,9 +8,9 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from api.state import app_state
 from api.routes import riders, stages, simulate, results, export, odds
-from engine.data_loader import load_all_data, load_team_ttt_odds
+from engine.data_loader import load_all_data, load_team_ttt_odds, load_climb_rankings, load_sprint_rankings, load_classics_rankings
 from engine.models import StageType
-from engine.performance_model import apply_odds_calibration, apply_ttt_calibration
+from engine.performance_model import apply_odds_calibration, apply_ttt_calibration, apply_ranking_calibration
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
@@ -33,10 +33,30 @@ async def lifespan(app: FastAPI):
     apply_odds_calibration(app_state.riders, app_state.odds,
                            "gc_win", StageType.MOUNTAIN,
                            target_field="calibration_factor")
+    # Climb ranking calibration for riders NOT covered by bookmaker GC odds (mountain stages)
+    climb_pts = load_climb_rankings(DATA_DIR)
+    apply_ranking_calibration(app_state.riders, climb_pts, app_state.odds,
+                              market="gc_win", target_field="calibration_factor",
+                              stage_type=StageType.MOUNTAIN)
     # Stage win odds → stage_calibration_factor used on flat/hilly stages
     apply_odds_calibration(app_state.riders, app_state.odds,
                            "stage_win", StageType.FLAT,
                            target_field="stage_calibration_factor")
+    # Sprint ranking calibration for riders NOT covered by bookmaker stage win odds (flat)
+    sprint_pts = load_sprint_rankings(DATA_DIR)
+    apply_ranking_calibration(app_state.riders, sprint_pts, app_state.odds,
+                              market="stage_win", target_field="stage_calibration_factor",
+                              stage_type=StageType.FLAT)
+    # Classics/puncheur ranking calibration → hilly_calibration_factor
+    # First seed with bookmaker stage_win odds (same market applies to hilly stages)
+    apply_odds_calibration(app_state.riders, app_state.odds,
+                           "stage_win", StageType.HILLY,
+                           target_field="hilly_calibration_factor")
+    # Then fill uncovered riders using classics ranking points
+    classics_pts = load_classics_rankings(DATA_DIR)
+    apply_ranking_calibration(app_state.riders, classics_pts, app_state.odds,
+                              market="stage_win", target_field="hilly_calibration_factor",
+                              stage_type=StageType.HILLY)
     yield
 
 

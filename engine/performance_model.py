@@ -12,14 +12,18 @@ def compute_stage_weights(
     factors = STAGE_FACTORS[stage_type]
     primary_attr, secondary_attr = STAGE_RATING_MAP[stage_type]
 
-    sprint_stages = (StageType.FLAT, StageType.HILLY)
     raw: dict[int, float] = {}
     for rid, rs in riders.items():
         if not rs.is_active():
             continue
         primary = getattr(rs, primary_attr)
         secondary = getattr(rs, secondary_attr)
-        cal = rs.stage_calibration_factor if stage_type in sprint_stages else rs.calibration_factor
+        if stage_type == StageType.FLAT:
+            cal = rs.stage_calibration_factor
+        elif stage_type == StageType.HILLY:
+            cal = rs.hilly_calibration_factor
+        else:
+            cal = rs.calibration_factor
         raw[rid] = (
             primary * factors["primary"] + secondary * factors["secondary"]
         ) * rs.form * cal
@@ -130,3 +134,77 @@ def apply_ttt_calibration(
         factor = pm / pmod if pmod > 0 else 1.0
         for rid in rids:
             riders[rid].ttt_team_factor = factor
+
+
+def apply_ranking_calibration(
+    riders: dict[int, RiderState],
+    ranking_pts: dict[int, float],
+    odds: dict[int, dict[str, float]],
+    market: str = "gc_win",
+    target_field: str = "calibration_factor",
+    stage_type: StageType = StageType.MOUNTAIN,
+) -> None:
+    """
+    Calibrate riders NOT covered by bookmaker odds using UCI ranking points.
+
+    Only mutates {target_field} for active riders that have no entry in odds[market].
+    Algorithm:
+      1. Identify uncovered riders (active, not in bookmaker odds for `market`)
+      2. Among uncovered riders that have ranking data:
+         p_market[rid] = ranking_pts[rid] / sum(ranking_pts of all uncovered riders with data)
+      3. Compute base model weights for uncovered riders (calibration_factor reset to 1.0)
+         p_model[rid]  = raw_weight[rid] / sum(raw_weights of all uncovered riders)
+      4. target_field = p_market / p_model  (only for riders with ranking data;
+         riders without data keep target_field = 1.0)
+    """
+    # Identify bookmaker-covered riders
+    covered = {rid for rid, mkt in odds.items() if market in mkt}
+
+    # Uncovered active riders
+    uncovered = [rid for rid, rs in riders.items() if rs.is_active() and rid not in covered]
+    if not uncovered:
+        return
+
+    # Save and reset calibration factors for uncovered riders so base weights are pure
+    saved = {rid: getattr(riders[rid], target_field) for rid in uncovered}
+    for rid in uncovered:
+        setattr(riders[rid], target_field, 1.0)
+
+    # Compute base model weights for uncovered riders only
+    factors = STAGE_FACTORS[stage_type]
+    primary_attr, secondary_attr = STAGE_RATING_MAP[stage_type]
+    raw_model: dict[int, float] = {}
+    for rid in uncovered:
+        rs = riders[rid]
+        raw_model[rid] = (
+            getattr(rs, primary_attr) * factors["primary"]
+            + getattr(rs, secondary_attr) * factors["secondary"]
+        ) * rs.form
+
+    total_model = sum(raw_model.values())
+    if total_model == 0:
+        # Restore saved values and abort
+        for rid in uncovered:
+            setattr(riders[rid], target_field, saved[rid])
+        return
+
+    p_model = {rid: w / total_model for rid, w in raw_model.items()}
+
+    # Market-implied distribution from ranking points (only uncovered riders with data)
+    pts_with_data = {rid: ranking_pts[rid] for rid in uncovered if rid in ranking_pts}
+    if not pts_with_data:
+        # No ranking data for any uncovered rider — restore and abort
+        for rid in uncovered:
+            setattr(riders[rid], target_field, saved[rid])
+        return
+
+    total_pts = sum(pts_with_data.values())
+    p_market = {rid: pts / total_pts for rid, pts in pts_with_data.items()}
+
+    # Set calibration factors
+    for rid in uncovered:
+        if rid in p_market:
+            p_mod = p_model.get(rid, 0.0)
+            setattr(riders[rid], target_field, p_market[rid] / p_mod if p_mod > 0 else 1.0)
+        else:
+            setattr(riders[rid], target_field, 1.0)
