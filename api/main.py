@@ -21,6 +21,11 @@ async def lifespan(app: FastAPI):
     app_state.riders = r
     app_state.stages = s
     app_state.odds = o
+    # Young rider win odds first (while calibration_factor is still 1.0 = base ratings)
+    # This ensures young_rider_calibration_factor reflects raw rating comparisons, not GC-inflated ones
+    apply_odds_calibration(app_state.riders, app_state.odds,
+                           "young_rider_win", StageType.MOUNTAIN,
+                           target_field="young_rider_calibration_factor")
     # GC win odds → calibration_factor used on mountain/TT stages
     apply_odds_calibration(app_state.riders, app_state.odds,
                            "gc_win", StageType.MOUNTAIN,
@@ -29,10 +34,6 @@ async def lifespan(app: FastAPI):
     apply_odds_calibration(app_state.riders, app_state.odds,
                            "stage_win", StageType.FLAT,
                            target_field="stage_calibration_factor")
-    # Young rider win odds → young_rider_calibration_factor applied in young rider jersey ranking
-    apply_odds_calibration(app_state.riders, app_state.odds,
-                           "young_rider_win", StageType.MOUNTAIN,
-                           target_field="young_rider_calibration_factor")
     yield
 
 
