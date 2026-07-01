@@ -46,6 +46,7 @@ class RiderState:
     stage_calibration_factor: float = 1.0         # stage win odds calibration — applied on flat stages
     hilly_calibration_factor: float = 1.0         # classics/puncheur calibration — applied on hilly stages
     young_rider_calibration_factor: float = 1.0   # young rider odds calibration — post-GC ranking adjustment
+    points_calibration_factor: float = 1.0        # green jersey odds calibration — scales effective points in aggregation
     ttt_team_factor: float = 1.0                  # TTT team odds calibration — applied on TTT stages
 
     def is_active(self) -> bool:

@@ -37,11 +37,19 @@ def aggregate_results(
             stage_wins[sr.stage][sr.winner_id] += 1
 
     # --- Points jersey ---
+    # Apply points_calibration_factor to scale effective points per rider before finding winner.
+    # This mirrors how young_rider_calibration_factor adjusts GC times for young rider jersey.
     points_wins: dict[int, int] = defaultdict(int)
     for it in iterations:
         if it.points_scores:
-            winner = max(it.points_scores, key=lambda k: it.points_scores[k])
-            points_wins[winner] += 1
+            adjusted = {
+                rid: pts * active[rid].points_calibration_factor
+                for rid, pts in it.points_scores.items()
+                if rid in active
+            }
+            if adjusted:
+                winner = max(adjusted, key=adjusted.get)
+                points_wins[winner] += 1
 
     # --- KOM ---
     kom_wins: dict[int, int] = defaultdict(int)
