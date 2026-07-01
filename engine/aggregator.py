@@ -120,11 +120,16 @@ def aggregate_results(
         ))
     stages_all_odds.sort(key=lambda x: -x.win_pct)
 
-    # Young rider jersey: per iteration, find eligible rider with lowest GC time
+    # Young rider jersey: per iteration, find eligible rider with lowest adjusted GC time
+    # young_rider_calibration_factor boosts riders favoured by young rider market odds
     eligible_ids = {rid for rid, rs in active.items() if rs.rider.young_rider_eligible}
     young_jersey_wins: dict[int, int] = defaultdict(int)
     for it in iterations:
-        eligible_times = {rid: t for rid, t in it.gc_times.items() if rid in eligible_ids}
+        eligible_times = {}
+        for rid, t in it.gc_times.items():
+            if rid in eligible_ids and t != float('inf'):
+                factor = active[rid].young_rider_calibration_factor
+                eligible_times[rid] = t / factor if factor > 0 else t
         if eligible_times:
             young_winner = min(eligible_times, key=lambda k: eligible_times[k])
             young_jersey_wins[young_winner] += 1

@@ -13,7 +13,7 @@ from engine.performance_model import compute_stage_weights
 from engine.time_gaps import generate_time_gaps
 
 # Used by aggregator to identify young rider jersey contenders
-YOUNG_RIDER_BIRTH_YEAR = 2003  # UCI rule: born on/after 1 Jan 2003
+YOUNG_RIDER_BIRTH_YEAR = 2001  # UCI rule: under 26 on 1 Jan 2026 → born on/after 1 Jan 2001
 
 
 def _simulate_one_stage(

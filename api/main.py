@@ -29,6 +29,10 @@ async def lifespan(app: FastAPI):
     apply_odds_calibration(app_state.riders, app_state.odds,
                            "stage_win", StageType.FLAT,
                            target_field="stage_calibration_factor")
+    # Young rider win odds → young_rider_calibration_factor applied in young rider jersey ranking
+    apply_odds_calibration(app_state.riders, app_state.odds,
+                           "young_rider_win", StageType.MOUNTAIN,
+                           target_field="young_rider_calibration_factor")
     yield
 
 
