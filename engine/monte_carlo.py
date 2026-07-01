@@ -8,8 +8,10 @@ import numpy as np
 from engine.models import IterationResult, StageResult, RiderState, Stage, StageType
 from engine.config import (
     SIMULATION_ITERATIONS,
-    TDF_POINTS_SCALE,
+    STAGE_POINTS_SCALE,
     KOM_POINTS,
+    BUNCH_FINISH_STAGES,
+    INTERMEDIATE_SPRINT_STAGES,
     INTERMEDIATE_SPRINT_POINTS,
 )
 from engine.performance_model import compute_stage_weights
@@ -82,10 +84,10 @@ def _simulate_ttt_stage(
             all_gaps[rid] = 0.0
 
     # Stage points: one representative per team position (highest TT rider)
-    tt_scale = TDF_POINTS_SCALE[StageType.TT]
     stage_points: dict[int, int] = {}
+    ttt_scale = STAGE_POINTS_SCALE.get(stage.stage, {})
     for pos, team_name in enumerate(ordered_teams, start=1):
-        pts = tt_scale.get(pos, 0)
+        pts = ttt_scale.get(pos, 0)
         if pts > 0:
             rep = max(teams[team_name], key=lambda rid: riders[rid].tt)
             stage_points[rep] = pts
@@ -136,16 +138,16 @@ def _simulate_one_stage(
             all_gaps[rid] = 0.0
 
     # Determine stage finish order for points.
-    # Flat/hilly: bunch finish — all gaps are 0, so sort by a fresh Gumbel-weighted
-    # sprint draw using the same performance weights (consistent with winner selection).
-    # Mountain/TT: gaps are meaningful, sort by ascending time.
-    points_scale = TDF_POINTS_SCALE[stage_type]
-    if stage_type in (StageType.FLAT, StageType.HILLY):
+    # Bunch-finish stages (coefficient 1 & 2): all gaps are 0, so rank by a fresh
+    # Gumbel-weighted sprint draw using the same performance weights.
+    # Mountain/TT stages: gaps are meaningful, sort by ascending time.
+    points_scale = STAGE_POINTS_SCALE.get(stage.stage, {})
+    if stage.stage in BUNCH_FINISH_STAGES:
         perf = np.array([weights_dict[rid] for rid in active_ids], dtype=float)
         log_w = np.log(np.clip(perf, 1e-9, None))
         ranked_idx = np.argsort(-(log_w + rng.gumbel(size=len(active_ids))))
         sorted_active = [active_ids[int(i)] for i in ranked_idx]
-        # Guarantee the drawn stage winner is always 1st (sprint draw above may differ)
+        # Guarantee the drawn stage winner is always 1st
         if sorted_active[0] != winner_id:
             sorted_active.remove(winner_id)
             sorted_active.insert(0, winner_id)
@@ -158,9 +160,9 @@ def _simulate_one_stage(
         if pts > 0:
             stage_points[rid] = pts
 
-    # Intermediate sprint bonus (flat/hilly stages): draw top-3 by sprint weights
+    # Intermediate sprint bonus (bunch-finish stages only): draw top-3 by sprint weights.
     # Gives sprinters green jersey points independent of the stage finish result.
-    if stage_type in (StageType.FLAT, StageType.HILLY):
+    if stage.stage in INTERMEDIATE_SPRINT_STAGES:
         sprint_raw = np.array(
             [riders[rid].sprint * riders[rid].form * riders[rid].stage_calibration_factor
              for rid in active_ids],
