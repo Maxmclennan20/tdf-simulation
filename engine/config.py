@@ -16,12 +16,36 @@ STAGE_RATING_MAP: dict[StageType, tuple[str, str]] = {
     StageType.TT:       ("tt",       "gc"),
 }
 
-# TdF points jersey scale: finish position -> points
-TDF_POINTS_SCALE: dict[int, int] = {
-    1: 50, 2: 30, 3: 20, 4: 18, 5: 16,
-    6: 14, 7: 12, 8: 10, 9:  8, 10:  7,
-    11: 6, 12:  5, 13:  4, 14:  3, 15:  2,
+# TdF points jersey scale per stage type (mirrors actual ASO rules).
+# Flat stages reward sprinters heavily; mountain stages give far fewer points
+# so GC riders can't simply out-accumulate sprinters over 21 stages.
+TDF_POINTS_SCALE: dict[StageType, dict[int, int]] = {
+    StageType.FLAT: {
+        1: 50, 2: 30, 3: 20, 4: 18, 5: 16,
+        6: 14, 7: 12, 8: 10, 9:  8, 10:  7,
+        11: 6, 12:  5, 13:  4, 14:  3, 15:  2,
+    },
+    StageType.HILLY: {
+        1: 30, 2: 25, 3: 22, 4: 19, 5: 17,
+        6: 15, 7: 13, 8: 11, 9:  9, 10:  7,
+        11: 6, 12:  5, 13:  4, 14:  3, 15:  2,
+    },
+    StageType.MOUNTAIN: {
+        1: 20, 2: 17, 3: 15, 4: 13, 5: 11,
+        6:  9, 7:  7, 8:  6, 9:  5, 10:  4,
+        11: 3, 12:  2, 13:  1,
+    },
+    StageType.TT: {
+        1: 20, 2: 17, 3: 15, 4: 13, 5: 11,
+        6:  9, 7:  7, 8:  6, 9:  5, 10:  4,
+        11: 3, 12:  2, 13:  1,
+    },
 }
+
+# Intermediate sprint bonus points on flat/hilly stages (green jersey competition).
+# Drawn separately using sprint-weighted probabilities so sprinters accumulate
+# points even when the bunch finish awards stage points to a different rider.
+INTERMEDIATE_SPRINT_POINTS: dict[int, int] = {1: 20, 2: 13, 3: 8}
 
 # KOM points: category -> {position: points}
 KOM_POINTS: dict[str, dict[int, int]] = {
