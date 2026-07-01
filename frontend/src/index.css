@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Unlayered override: ensure anchors don't get browser-default blue from user-agent stylesheet.
+   Tailwind's preflight sets this inside @layer base, which can lose to UA a:-webkit-any-link. */
+a { color: inherit; }
+
 @layer base {
   * { box-sizing: border-box; }
   html, body, #root { height: 100%; margin: 0; padding: 0; }
