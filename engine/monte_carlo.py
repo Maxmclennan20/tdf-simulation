@@ -204,6 +204,7 @@ def _simulate_one_iteration(
         for rid, rs in riders.items()
     }
     cumulative_points: dict[int, int] = {rid: 0 for rid in riders}
+    cumulative_sprint_points: dict[int, int] = {rid: 0 for rid in riders}
     cumulative_kom: dict[int, int] = {rid: 0 for rid in riders}
     dnf_ids: set[int] = {rid for rid, rs in riders.items() if rs.dnf}
 
@@ -218,9 +219,14 @@ def _simulate_one_iteration(
             if riders[rid].is_active():
                 cumulative_gc[rid] += gap_map[rid]
 
-        # Accumulate points jersey points
+        # Accumulate points jersey points (all stages)
         for rid, pts in s_points.items():
             cumulative_points[rid] = cumulative_points.get(rid, 0) + pts
+
+        # Accumulate sprint-stage points (bunch-finish stages only — green jersey calibration proxy)
+        if stage_num in BUNCH_FINISH_STAGES:
+            for rid, pts in s_points.items():
+                cumulative_sprint_points[rid] = cumulative_sprint_points.get(rid, 0) + pts
 
         # Accumulate KOM points
         for rid, pts in s_kom.items():
@@ -244,6 +250,7 @@ def _simulate_one_iteration(
         stage_results=stage_results,
         gc_times=dict(cumulative_gc),
         points_scores=dict(cumulative_points),
+        sprint_points_scores=dict(cumulative_sprint_points),
         kom_scores=dict(cumulative_kom),
         dnf_ids=dnf_ids,
     )

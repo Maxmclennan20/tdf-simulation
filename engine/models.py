@@ -64,9 +64,10 @@ class StageResult:
 @dataclass
 class IterationResult:
     stage_results: list[StageResult]
-    gc_times: dict[int, float]      # rider_id -> total seconds
-    points_scores: dict[int, int]   # rider_id -> total points jersey points
-    kom_scores: dict[int, int]      # rider_id -> total KOM points
+    gc_times: dict[int, float]             # rider_id -> total seconds
+    points_scores: dict[int, int]          # rider_id -> total points jersey points (all stages)
+    sprint_points_scores: dict[int, int]   # rider_id -> points from bunch-finish stages only
+    kom_scores: dict[int, int]             # rider_id -> total KOM points
     dnf_ids: set[int]
 
 

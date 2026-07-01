@@ -2,6 +2,7 @@ from __future__ import annotations
 from collections import defaultdict
 from engine.models import RiderState, Stage, IterationResult, RiderOdds, AggregatedResults
 from engine.odds_converter import probability_to_decimal, decimal_to_fractional
+from engine.config import BUNCH_FINISH_STAGES
 
 
 def aggregate_results(
@@ -37,19 +38,21 @@ def aggregate_results(
             stage_wins[sr.stage][sr.winner_id] += 1
 
     # --- Points jersey ---
-    # Apply points_calibration_factor to scale effective points per rider before finding winner.
-    # This mirrors how young_rider_calibration_factor adjusts GC times for young rider jersey.
+    # Green jersey winner per iteration = argmax(bunch_stage_wins × calibration_factor).
+    # Counting bunch-finish stage WINS (not total accumulated points) isolates the
+    # sprint competition from mountain stage point inflation that otherwise gives
+    # GC riders like Pogacar 76% of the jersey through mountain stage dominance.
+    # points_calibration_factor is set by bootstrap calibration (points_calibration.py)
+    # to align the distribution with bookmaker 'points_win' market odds.
     points_wins: dict[int, int] = defaultdict(int)
     for it in iterations:
-        if it.points_scores:
-            adjusted = {
-                rid: pts * active[rid].points_calibration_factor
-                for rid, pts in it.points_scores.items()
-                if rid in active
-            }
-            if adjusted:
-                winner = max(adjusted, key=adjusted.get)
-                points_wins[winner] += 1
+        sprint_wins: dict[int, float] = defaultdict(float)
+        for sr in it.stage_results:
+            if sr.stage in BUNCH_FINISH_STAGES and sr.winner_id in active:
+                sprint_wins[sr.winner_id] += active[sr.winner_id].points_calibration_factor
+        if sprint_wins:
+            winner = max(sprint_wins, key=sprint_wins.get)
+            points_wins[winner] += 1
 
     # --- KOM ---
     kom_wins: dict[int, int] = defaultdict(int)

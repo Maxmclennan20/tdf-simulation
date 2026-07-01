@@ -10,7 +10,8 @@ from api.state import app_state
 from api.routes import riders, stages, simulate, results, export, odds
 from engine.data_loader import load_all_data, load_team_ttt_odds, load_climb_rankings, load_sprint_rankings, load_classics_rankings
 from engine.models import StageType
-from engine.performance_model import apply_odds_calibration, apply_ttt_calibration, apply_ranking_calibration, apply_points_calibration
+from engine.performance_model import apply_odds_calibration, apply_ttt_calibration, apply_ranking_calibration
+from engine.points_calibration import apply_points_calibration
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
@@ -58,7 +59,8 @@ async def lifespan(app: FastAPI):
                               market="stage_win", target_field="hilly_calibration_factor",
                               stage_type=StageType.HILLY)
     # Green jersey (points classification) odds → points_calibration_factor
-    apply_points_calibration(app_state.riders, app_state.odds)
+    # Uses bootstrap simulation to correctly calibrate mountain-stage vs sprint accumulation
+    apply_points_calibration(app_state.riders, app_state.stages, app_state.odds)
     yield
 
 
