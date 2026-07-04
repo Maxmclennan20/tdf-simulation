@@ -69,6 +69,7 @@ class IterationResult:
     sprint_points_scores: dict[int, int]   # rider_id -> points from bunch-finish stages only
     kom_scores: dict[int, int]             # rider_id -> total KOM points
     dnf_ids: set[int]
+    young_rider_winner_id: int | None = None  # drawn by yr_cal-weighted probability
 
 
 @dataclass

@@ -246,6 +246,25 @@ def _simulate_one_iteration(
             )
         )
 
+    # Draw young rider jersey winner: probability-weighted draw by yr_cal among active eligible riders.
+    # This decouples young rider from pure GC time so bookmaker odds can be calibrated directly,
+    # avoiding the structural issue where TT-weak climbers (high GC calibration but low TT) can
+    # never win the young rider jersey through GC time alone despite strong market odds.
+    eligible_active = [
+        rid for rid, rs in riders.items()
+        if rs.is_active() and rs.rider.young_rider_eligible
+    ]
+    young_rider_winner_id: int | None = None
+    if eligible_active:
+        yr_weights = np.array(
+            [riders[rid].young_rider_calibration_factor for rid in eligible_active], dtype=float
+        )
+        yr_total = yr_weights.sum()
+        if yr_total > 0:
+            yr_weights /= yr_total
+            yr_idx = int(rng.choice(len(eligible_active), p=yr_weights))
+            young_rider_winner_id = eligible_active[yr_idx]
+
     return IterationResult(
         stage_results=stage_results,
         gc_times=dict(cumulative_gc),
@@ -253,6 +272,7 @@ def _simulate_one_iteration(
         sprint_points_scores=dict(cumulative_sprint_points),
         kom_scores=dict(cumulative_kom),
         dnf_ids=dnf_ids,
+        young_rider_winner_id=young_rider_winner_id,
     )
 
 

@@ -11,7 +11,7 @@ from api.routes import riders, stages, simulate, results, export, odds
 from engine.data_loader import load_all_data, load_team_ttt_odds, load_climb_rankings, load_sprint_rankings, load_classics_rankings
 from engine.models import StageType
 from engine.performance_model import apply_odds_calibration, apply_ttt_calibration, apply_ranking_calibration
-from engine.points_calibration import apply_points_calibration
+from engine.points_calibration import apply_points_calibration, apply_young_rider_calibration
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
@@ -25,11 +25,6 @@ async def lifespan(app: FastAPI):
     # TTT team calibration (Stage 1) — before any individual odds calibration
     team_ttt_odds = load_team_ttt_odds(DATA_DIR)
     apply_ttt_calibration(r, team_ttt_odds)
-    # Young rider win odds first (while calibration_factor is still 1.0 = base ratings)
-    # This ensures young_rider_calibration_factor reflects raw rating comparisons, not GC-inflated ones
-    apply_odds_calibration(app_state.riders, app_state.odds,
-                           "young_rider_win", StageType.MOUNTAIN,
-                           target_field="young_rider_calibration_factor")
     # GC win odds → calibration_factor used on mountain/TT stages
     apply_odds_calibration(app_state.riders, app_state.odds,
                            "gc_win", StageType.MOUNTAIN,
@@ -61,6 +56,10 @@ async def lifespan(app: FastAPI):
     # Green jersey (points classification) odds → points_calibration_factor
     # Uses bootstrap simulation to correctly calibrate mountain-stage vs sprint accumulation
     apply_points_calibration(app_state.riders, app_state.stages, app_state.odds)
+    # Young rider jersey → young_rider_calibration_factor
+    # Bootstrap calibration must run AFTER GC calibration so gc_times in the bootstrap
+    # already reflect the calibrated GC odds (calibration_factor applied).
+    apply_young_rider_calibration(app_state.riders, app_state.stages, app_state.odds)
     yield
 
 

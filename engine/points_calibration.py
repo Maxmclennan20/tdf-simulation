@@ -3,7 +3,7 @@ from collections import defaultdict
 from engine.models import RiderState, Stage
 from engine.config import BUNCH_FINISH_STAGES
 
-# Bootstrap parameters
+# Bootstrap parameters (used for points/green jersey calibration)
 BOOTSTRAP_ITERS_PER_STEP = 2000  # iterations per calibration step (higher = less noise, ~15s/step)
 MAX_CALIBRATION_STEPS = 5        # damped iteration steps (total ~75s startup)
 DAMPING = 0.5                    # geometric-mean damping prevents overshoot
@@ -137,3 +137,54 @@ def apply_points_calibration(
                 # Rider never won in this step — nudge factor toward zero
                 rs.points_calibration_factor *= DAMPING
             # else p_m == 0: leave factor unchanged (shouldn't happen)
+
+
+
+def apply_young_rider_calibration(
+    riders: dict[int, RiderState],
+    stages: dict[int, Stage],
+    odds: dict[int, dict[str, float]],
+) -> None:
+    """
+    Set young_rider_calibration_factor directly from bookmaker market probabilities.
+
+    WHY NOT BOOTSTRAP (effective-time approach)?
+
+    For some young rider contenders (e.g. Seixas, gc_win=11.5 but tt=72), the
+    cumulative GC time from the simulation is structurally inconsistent with
+    their young rider market odds.  Their TT weakness produces consistently
+    worse GC times than riders like Del Toro (tt=74) and Ayuso (tt=82), so
+    argmin(gc_time / yr_cal) cannot simultaneously achieve market targets for
+    all covered riders — the calibration either overshoots one rider or
+    drastically undershoots another.
+
+    WHY DIRECT PROBABILITY DRAW?
+
+    The simulation draws the young rider winner in each iteration using a
+    probability-weighted draw over eligible active riders (yr_cal as weights).
+    This mirrors the stage-winner draw mechanism and allows exact market
+    calibration.  A DNF rider cannot win (the draw is over active riders only),
+    preserving realistic correlation with race outcomes.
+
+    yr_cal is set to the normalised market implied probability.  Riders without
+    market coverage receive 1/DEFAULT_UNRATED_ODDS weight — small enough to
+    ensure covered riders dominate, but non-zero so uncovered riders can
+    occasionally win.
+    """
+    active = {rid: rs for rid, rs in riders.items() if rs.is_active()}
+    eligible = {rid: rs for rid, rs in active.items() if rs.rider.young_rider_eligible}
+
+    # Normalised market implied probabilities for all eligible riders
+    raw: dict[int, float] = {}
+    for rid in eligible:
+        if rid in odds and "young_rider_win" in odds[rid]:
+            raw[rid] = 1.0 / odds[rid]["young_rider_win"]
+        else:
+            raw[rid] = 1.0 / DEFAULT_UNRATED_ODDS
+    total = sum(raw.values())
+    if total == 0:
+        return
+
+    # Set yr_cal = normalised market probability (draw weight in _simulate_one_iteration)
+    for rid in eligible:
+        riders[rid].young_rider_calibration_factor = raw[rid] / total

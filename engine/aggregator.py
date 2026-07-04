@@ -131,19 +131,15 @@ def aggregate_results(
         ))
     stages_all_odds.sort(key=lambda x: -x.win_pct)
 
-    # Young rider jersey: per iteration, find eligible rider with lowest adjusted GC time
-    # young_rider_calibration_factor boosts riders favoured by young rider market odds
+    # Young rider jersey: use the pre-drawn winner from each iteration.
+    # Winner is drawn in the simulation by yr_cal-weighted probability, which is set
+    # directly from bookmaker odds. This allows exact market calibration for riders
+    # whose GC-time profile is structurally incompatible with their market odds.
     eligible_ids = {rid for rid, rs in active.items() if rs.rider.young_rider_eligible}
     young_jersey_wins: dict[int, int] = defaultdict(int)
     for it in iterations:
-        eligible_times = {}
-        for rid, t in it.gc_times.items():
-            if rid in eligible_ids and t != float('inf'):
-                factor = active[rid].young_rider_calibration_factor
-                eligible_times[rid] = t / factor if factor > 0 else t
-        if eligible_times:
-            young_winner = min(eligible_times, key=lambda k: eligible_times[k])
-            young_jersey_wins[young_winner] += 1
+        if it.young_rider_winner_id is not None and it.young_rider_winner_id in active:
+            young_jersey_wins[it.young_rider_winner_id] += 1
 
     young_total = sum(young_jersey_wins.values())
     young_odds = []
