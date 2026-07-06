@@ -61,3 +61,15 @@ KOM_POINTS: dict[str, dict[int, int]] = {
 }
 
 SIMULATION_ITERATIONS: int = 20_000
+
+# Per-stage probability of mid-race abandonment (crash, illness, exhaustion).
+# Flat stages carry the highest rate due to bunch-sprint crash risk.
+# TT stages are very low (individual start, no peloton contact).
+# Calibrated so ~13-15% of starters abandon over a 21-stage race,
+# matching historical TdF completion rates.
+DNF_PROB_PER_STAGE_TYPE: dict = {
+    StageType.FLAT:     0.0090,
+    StageType.HILLY:    0.0075,
+    StageType.MOUNTAIN: 0.0060,
+    StageType.TT:       0.0025,
+}

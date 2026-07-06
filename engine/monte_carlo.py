@@ -13,6 +13,7 @@ from engine.config import (
     BUNCH_FINISH_STAGES,
     INTERMEDIATE_SPRINT_STAGES,
     INTERMEDIATE_SPRINT_POINTS,
+    DNF_PROB_PER_STAGE_TYPE,
 )
 from engine.performance_model import compute_stage_weights
 from engine.time_gaps import generate_time_gaps
@@ -197,6 +198,8 @@ def _simulate_one_iteration(
 
     Cumulative GC times are tracked across all stages.
     DNS/DNF riders always carry float('inf') GC time so they never win GC.
+    Mid-race DNFs are rolled per stage using DNF_PROB_PER_STAGE_TYPE; once
+    a rider abandons they are excluded from all subsequent stages.
     """
     # Initialise cumulative accumulators
     cumulative_gc: dict[int, float] = {
@@ -206,18 +209,40 @@ def _simulate_one_iteration(
     cumulative_points: dict[int, int] = {rid: 0 for rid in riders}
     cumulative_sprint_points: dict[int, int] = {rid: 0 for rid in riders}
     cumulative_kom: dict[int, int] = {rid: 0 for rid in riders}
-    dnf_ids: set[int] = {rid for rid, rs in riders.items() if rs.dnf}
+
+    # static_dnf_ids: pre-set before the race (rs.dnf=True)
+    # mid_race_dnf_ids: riders who abandon during the simulation
+    static_dnf_ids: set[int] = {rid for rid, rs in riders.items() if rs.dnf}
+    mid_race_dnf_ids: set[int] = set()
 
     stage_results: list[StageResult] = []
 
     for stage_num in sorted(stages.keys()):
         stage = stages[stage_num]
-        winner_id, gap_map, s_points, s_kom = _simulate_one_stage(riders, stage, rng)
 
-        # Accumulate GC times (only for active riders — inf stays inf)
+        # Roll for mid-race abandonment before each stage begins.
+        # Only pre-race-active riders who haven't already abandoned are at risk.
+        dnf_prob = DNF_PROB_PER_STAGE_TYPE.get(stage.type, 0.007)
+        for rid, rs in riders.items():
+            if rs.is_active() and rid not in mid_race_dnf_ids:
+                if rng.random() < dnf_prob:
+                    mid_race_dnf_ids.add(rid)
+                    cumulative_gc[rid] = float("inf")
+
+        # Build the field for this stage: exclude mid-race abandonees.
+        # Pre-race DNS/DNF riders remain in current_riders but are excluded
+        # within stage functions via rs.is_active().
+        current_riders = {
+            rid: rs for rid, rs in riders.items()
+            if rid not in mid_race_dnf_ids
+        }
+
+        winner_id, gap_map, s_points, s_kom = _simulate_one_stage(current_riders, stage, rng)
+
+        # Accumulate GC times (only for riders still in the race)
         for rid in riders:
-            if riders[rid].is_active():
-                cumulative_gc[rid] += gap_map[rid]
+            if riders[rid].is_active() and rid not in mid_race_dnf_ids:
+                cumulative_gc[rid] += gap_map.get(rid, 0.0)
 
         # Accumulate points jersey points (all stages)
         for rid, pts in s_points.items():
@@ -232,9 +257,9 @@ def _simulate_one_iteration(
         for rid, pts in s_kom.items():
             cumulative_kom[rid] = cumulative_kom.get(rid, 0) + pts
 
-        # Determine top-3 for this stage (by gap ascending among active riders)
-        active_ids = [rid for rid in riders if riders[rid].is_active()]
-        sorted_active = sorted(active_ids, key=lambda rid: gap_map[rid])
+        # Determine top-3 for this stage (by gap ascending among current field)
+        active_ids = [rid for rid in current_riders if current_riders[rid].is_active()]
+        sorted_active = sorted(active_ids, key=lambda rid: gap_map.get(rid, 0.0))
         top3 = sorted_active[:3]
 
         stage_results.append(
@@ -246,13 +271,11 @@ def _simulate_one_iteration(
             )
         )
 
-    # Draw young rider jersey winner: probability-weighted draw by yr_cal among active eligible riders.
-    # This decouples young rider from pure GC time so bookmaker odds can be calibrated directly,
-    # avoiding the structural issue where TT-weak climbers (high GC calibration but low TT) can
-    # never win the young rider jersey through GC time alone despite strong market odds.
+    # Draw young rider jersey winner: probability-weighted draw by yr_cal among
+    # eligible riders still in the race (excludes mid-race abandonees).
     eligible_active = [
         rid for rid, rs in riders.items()
-        if rs.is_active() and rs.rider.young_rider_eligible
+        if rs.is_active() and rid not in mid_race_dnf_ids and rs.rider.young_rider_eligible
     ]
     young_rider_winner_id: int | None = None
     if eligible_active:
@@ -271,7 +294,7 @@ def _simulate_one_iteration(
         points_scores=dict(cumulative_points),
         sprint_points_scores=dict(cumulative_sprint_points),
         kom_scores=dict(cumulative_kom),
-        dnf_ids=dnf_ids,
+        dnf_ids=static_dnf_ids | mid_race_dnf_ids,
         young_rider_winner_id=young_rider_winner_id,
     )
 
