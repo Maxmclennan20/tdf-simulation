@@ -60,24 +60,4 @@ KOM_POINTS: dict[str, dict[int, int]] = {
     "4":  {1:  1},
 }
 
-# Log-normal time gap parameters per stage type
-# (mu, sigma) of the underlying normal distribution
-# Applied per rider tier (higher-rated riders get lower mu)
-TIME_GAP_PARAMS: dict[str, dict[str, tuple[float, float]]] = {
-    "mountain": {
-        "tier_high":   (2.5, 0.8),   # riders with climbing > 80
-        "tier_mid":    (3.5, 0.9),   # riders with climbing 60-80
-        "tier_low":    (4.5, 1.0),   # riders with climbing < 60
-    },
-    "tt": {
-        "tier_high":   (1.5, 0.6),
-        "tier_mid":    (2.5, 0.7),
-        "tier_low":    (3.5, 0.8),
-    },
-}
-
-# Rider tier thresholds for time gap generation (based on relevant rating)
-TIER_HIGH_THRESHOLD: int = 80   # rating above this → tier_high
-TIER_MID_THRESHOLD: int = 60    # rating above this → tier_mid (else tier_low)
-
 SIMULATION_ITERATIONS: int = 20_000
