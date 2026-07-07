@@ -11,7 +11,7 @@ from api.routes import riders, stages, simulate, results, export, odds
 from engine.data_loader import load_all_data, load_team_ttt_odds, load_climb_rankings, load_sprint_rankings, load_classics_rankings
 from engine.models import StageType
 from engine.performance_model import apply_odds_calibration, apply_ttt_calibration, apply_ranking_calibration
-from engine.points_calibration import apply_points_calibration, apply_young_rider_calibration
+from engine.points_calibration import apply_points_calibration, apply_young_rider_calibration, apply_gc_bootstrap_calibration
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
@@ -53,6 +53,11 @@ async def lifespan(app: FastAPI):
     apply_ranking_calibration(app_state.riders, classics_pts, app_state.odds,
                               market="stage_win", target_field="hilly_calibration_factor",
                               stage_type=StageType.HILLY)
+    # GC bootstrap: fine-tune calibration_factor against actual simulated GC win rates.
+    # apply_odds_calibration only aligns mountain-stage win probability, but TT stages
+    # heavily influence GC outcomes (e.g. Evenepoel tt=97 wins GC far more than mountain
+    # weights imply).  Bootstrap corrects this across all market-covered riders.
+    apply_gc_bootstrap_calibration(app_state.riders, app_state.stages, app_state.odds)
     # Green jersey (points classification) odds → points_calibration_factor
     # Uses bootstrap simulation to correctly calibrate mountain-stage vs sprint accumulation
     apply_points_calibration(app_state.riders, app_state.stages, app_state.odds)

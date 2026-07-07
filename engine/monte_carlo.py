@@ -16,6 +16,8 @@ from engine.config import (
     DNF_PROB_PER_STAGE_TYPE,
     TEAM_LEADER_DNF_MULTIPLIER,
     FORM_SIGMA,
+    CATASTROPHE_PROB,
+    CATASTROPHE_FORM,
 )
 from engine.performance_model import compute_stage_weights
 from engine.time_gaps import generate_time_gaps
@@ -227,8 +229,15 @@ def _simulate_one_iteration(
     # after all stages so calibration state is not mutated between iterations.
     saved_forms: dict[int, float] = {rid: rs.form for rid, rs in riders.items()}
     form_noise = rng.lognormal(mean=0.0, sigma=FORM_SIGMA, size=len(riders))
+    catastrophe_rolls = rng.random(size=len(riders))
     for i, (rid, rs) in enumerate(riders.items()):
-        rs.form = saved_forms[rid] * float(form_noise[i])
+        if rs.is_active() and catastrophe_rolls[i] < CATASTROPHE_PROB:
+            # Race-ruining event (crash/illness not causing DNF): fixed low form
+            # for the entire Tour, modelling the soft-factor risk the market prices
+            # into even the strongest favourite.
+            rs.form = CATASTROPHE_FORM
+        else:
+            rs.form = saved_forms[rid] * float(form_noise[i])
 
     for stage_num in sorted(stages.keys()):
         stage = stages[stage_num]

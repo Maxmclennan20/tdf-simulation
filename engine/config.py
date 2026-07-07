@@ -85,6 +85,32 @@ TEAM_LEADER_DNF_MULTIPLIER: float = 0.35
 # per rider (mean=1, sigma=FORM_SIGMA) to model good/bad race form.
 # Applied temporarily to rs.form within each iteration; affects both stage win
 # probability (via compute_stage_weights) and time gaps (via time_gaps.py).
-# sigma=0.20 → 68% of forms in [0.82, 1.22]; bad race (p5): form≈0.72
+# sigma=0.15 → 68% of forms in [0.86, 1.16]; bad race (p5): form≈0.78
 # This redistributes GC probability from the structural favourites to the field.
 FORM_SIGMA: float = 0.15
+
+# Catastrophic race event: per iteration, each active rider independently has
+# a CATASTROPHE_PROB chance of suffering a race-ruining event (serious crash
+# causing injury, multi-day illness, severe fatigue crisis) that does NOT end
+# their race (no DNF) but dramatically reduces their performance for the
+# remainder of the tour.  Form is set to CATASTROPHE_FORM for the whole race.
+#
+# For Pogacar (climbing=99) at form=0.50:
+#   effective climbing = 99 + 25×log(0.50) ≈ 82 → median ~69s/stage on mountains
+#   Over 8 mountain stages: ~550s extra loss → drops completely out of GC contention
+#
+# This directly models the soft-factor discount the market applies to even the
+# strongest favourite: crashes, illness, fatigue episodes that are priced into
+# 1.24 odds but absent from a pure physical simulation.
+#
+# The power-method de-margined market target for 1.24 on a 154% book is ~74%
+# (see remove_overround_power). The achievable ceiling is roughly
+# (1 - CATASTROPHE_PROB) × (1 - leader DNF ~5%) × healthy-iteration win rate,
+# and the healthy win rate tops out near ~82% even at the calibration-factor
+# ceiling (Vingegaard's good-form iterations are unbeatable). At the former
+# CATASTROPHE_PROB=0.15 — tuned against the old proportional 52.4% target —
+# Pogacar capped at ~66%, 8pp short of target with cal_factor pinned at 100.
+# 0.05 puts the ceiling at 0.95 × 0.95 × 0.82 ≈ 74%, matching the market's
+# implied soft-factor discount (80.6% raw implied → 74.1% fair).
+CATASTROPHE_PROB: float = 0.05   # 5% chance of race-ruining event per rider per race
+CATASTROPHE_FORM: float = 0.50   # form multiplier when catastrophe hits

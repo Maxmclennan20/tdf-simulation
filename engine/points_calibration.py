@@ -2,6 +2,7 @@ from __future__ import annotations
 from collections import defaultdict
 from engine.models import RiderState, Stage
 from engine.config import BUNCH_FINISH_STAGES
+from engine.odds_converter import remove_overround_power
 
 # Bootstrap parameters (used for points/green jersey calibration)
 BOOTSTRAP_ITERS_PER_STEP = 2000  # iterations per calibration step (higher = less noise, ~15s/step)
@@ -14,8 +15,8 @@ BASE_SEED = 42
 # also decided by TT stages.  Riders with high TT ratings (e.g. Evenepoel tt=97)
 # or mediocre mountain but good all-round ratings win the GC far more than their
 # mountain-stage calibration implies.  Bootstrap measures actual GC win rates.
-GC_BOOTSTRAP_ITERS_PER_STEP = 2000  # iterations per step (higher = more stable with form noise)
-GC_MAX_CALIBRATION_STEPS = 12       # 12 steps balances convergence vs startup time with form noise
+GC_BOOTSTRAP_ITERS_PER_STEP = 6000  # iterations per step (higher SE per step: ±0.64pp vs ±1.1pp)
+GC_MAX_CALIBRATION_STEPS = 8        # 8 steps × 6000 iters; fewer steps needed with lower noise
 GC_MAX_CAL_FACTOR = 100.0           # hard ceiling: prevents TT-weak riders (Seixas, Del Toro) from
                                     # inflating calibration_factor to 1000+ without improving GC rate
 GC_DAMPING = 0.5
@@ -30,15 +31,14 @@ def _compute_market_probs(
     odds: dict[int, dict[str, float]],
     active: dict[int, RiderState],
 ) -> dict[int, float]:
-    """Return normalised market probability for every active rider."""
+    """Return power-method de-margined market probability for every active rider."""
     raw: dict[int, float] = {}
     for rid in active:
         if rid in odds and "points_win" in odds[rid]:
             raw[rid] = 1.0 / odds[rid]["points_win"]
         else:
             raw[rid] = 1.0 / DEFAULT_UNRATED_ODDS
-    total = sum(raw.values())
-    return {rid: v / total for rid, v in raw.items()}
+    return remove_overround_power(raw)
 
 
 def _jersey_win_probs(
@@ -186,20 +186,20 @@ def apply_young_rider_calibration(
     active = {rid: rs for rid, rs in riders.items() if rs.is_active()}
     eligible = {rid: rs for rid, rs in active.items() if rs.rider.young_rider_eligible}
 
-    # Normalised market implied probabilities for all eligible riders
+    # Power-method de-margined market implied probabilities for all eligible riders
     raw: dict[int, float] = {}
     for rid in eligible:
         if rid in odds and "young_rider_win" in odds[rid]:
             raw[rid] = 1.0 / odds[rid]["young_rider_win"]
         else:
             raw[rid] = 1.0 / DEFAULT_UNRATED_ODDS
-    total = sum(raw.values())
-    if total == 0:
+    if not raw:
         return
+    p_market = remove_overround_power(raw)
 
-    # Set yr_cal = normalised market probability (draw weight in _simulate_one_iteration)
+    # Set yr_cal = de-margined market probability (draw weight in _simulate_one_iteration)
     for rid in eligible:
-        riders[rid].young_rider_calibration_factor = raw[rid] / total
+        riders[rid].young_rider_calibration_factor = p_market[rid]
 
 
 def apply_gc_bootstrap_calibration(
@@ -239,15 +239,16 @@ def apply_gc_bootstrap_calibration(
 
     active = {rid: rs for rid, rs in riders.items() if rs.is_active()}
 
-    # Market-implied probabilities for ALL covered GC riders (normalised)
+    # Market-implied probabilities for ALL covered GC riders, de-margined via
+    # the power method — MUST match apply_odds_calibration so the bootstrap
+    # refines the same targets rather than re-targeting proportional ones.
     raw_market: dict[int, float] = {}
     for rid, rs in active.items():
         if rid in odds and "gc_win" in odds[rid]:
             raw_market[rid] = 1.0 / odds[rid]["gc_win"]
     if not raw_market:
         return
-    total_market = sum(raw_market.values())
-    p_market = {rid: v / total_market for rid, v in raw_market.items()}
+    p_market = remove_overround_power(raw_market)
 
     for step in range(GC_MAX_CALIBRATION_STEPS):
         iters = run_simulation(

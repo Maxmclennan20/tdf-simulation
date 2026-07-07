@@ -82,11 +82,15 @@ def generate_time_gaps(
         form_adj = 25.0 * math.log(max(0.01, rs.form))
         # Calibration penalty: when calibration_factor < 1.0 the market implies
         # this rider underperforms raw ratings (health, team tactics, etc.).
-        # Reduce effective rating by up to 7 pts at cal=0 (0 when cal >= 1.0).
+        # Reduce effective rating by up to 14 pts at cal=0 (0 when cal >= 1.0).
         # This lets the GC bootstrap actually close the gap for riders like
         # Vingegaard and Evenepoel whose time gap performance wouldn't otherwise
-        # respond to calibration_factor suppression.
-        cal_penalty = max(0.0, 7.0 * (1.0 - rs.calibration_factor))
+        # respond to calibration_factor suppression. Note the lever is weak for
+        # elite riders: their calibrated factors start well above 1.0, so eight
+        # damped bootstrap steps rarely push them below the activation point —
+        # doubling the scale from 7 to 14 moved Pogacar's GC rate only ~1pp
+        # (68.4% -> 69.4% vs a 74.1% power-method target).
+        cal_penalty = max(0.0, 14.0 * (1.0 - rs.calibration_factor))
         if is_mountain:
             mu, sigma = _mountain_params(rs.climbing + form_adj - cal_penalty)
         else:

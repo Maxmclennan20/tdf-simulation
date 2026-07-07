@@ -2,6 +2,7 @@ from __future__ import annotations
 from collections import defaultdict
 from engine.models import RiderState, StageType
 from engine.config import STAGE_FACTORS, STAGE_RATING_MAP
+from engine.odds_converter import remove_overround_power
 
 
 def compute_stage_weights(
@@ -46,7 +47,8 @@ def apply_odds_calibration(
     """
     Mutates riders[].{target_field} in-place.
     Algorithm:
-      1. Extract market-implied probability: p_market = 1 / decimal_odds, normalised
+      1. Extract market-implied probability: p_market = (1 / decimal_odds)^k,
+         de-margined via the power method (remove_overround_power)
       2. Compute model-implied probability from raw weights (with target_field reset to 1.0)
       3. target_field = p_market / p_model (1.0 for riders with no odds)
     """
@@ -61,9 +63,8 @@ def apply_odds_calibration(
     if not market_raw:
         return  # No odds data — leave all factors at 1.0
 
-    # Normalise to remove overround
-    total_market = sum(market_raw.values())
-    p_market: dict[int, float] = {rid: v / total_market for rid, v in market_raw.items()}
+    # De-margin via the power method (favourite-longshot aware)
+    p_market: dict[int, float] = remove_overround_power(market_raw)
 
     # Step 2: model-implied probabilities (reset target field to 1.0 first)
     for rs in riders.values():
@@ -88,7 +89,7 @@ def apply_ttt_calibration(
     """
     Set ttt_team_factor for every rider based on team TTT market odds.
     Algorithm mirrors apply_odds_calibration but operates at team level.
-      1. p_market[team] = (1/decimal_odds), normalised over teams with odds
+      1. p_market[team] = (1/decimal_odds)^k, de-margined via the power method
       2. p_model[team] = mean raw TT weight for that team, normalised over same teams
       3. ttt_team_factor = p_market / p_model (1.0 for teams with no odds)
     """
@@ -110,10 +111,9 @@ def apply_ttt_calibration(
         else:
             market_raw[team_name] = 1.0 / DEFAULT_UNRATED_ODDS
 
-    total_market = sum(market_raw.values())
-    if total_market == 0:
+    if not market_raw:
         return
-    p_market = {team: v / total_market for team, v in market_raw.items()}
+    p_market = remove_overround_power(market_raw)
 
     # Model probabilities (raw TT weight per team, normalised over ALL teams)
     model_raw: dict[str, float] = {}
