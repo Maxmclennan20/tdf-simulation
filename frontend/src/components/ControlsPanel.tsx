@@ -45,18 +45,18 @@ export function ControlsPanel({ riders, onUpdate }: Props) {
 
       {/* Rider table */}
       <div className="flex-1 overflow-y-auto">
-        <table className="w-full border-collapse text-xs">
+        <table className="w-full table-fixed border-collapse text-xs">
           <thead className="sticky top-0 z-10 bg-panel">
             <tr className="border-b border-border">
-              <th className="text-left py-2 pl-3 pr-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="text-left py-2 px-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Team</th>
-              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-11">SPR</th>
-              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-11">CLB</th>
-              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-11">TT</th>
-              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-11">GC</th>
-              <th className="text-center py-2 px-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-14">Form</th>
-              <th className="text-center py-2 px-1 text-[10px] font-semibold text-red-500/70 uppercase tracking-wider w-10">DNS</th>
-              <th className="text-center py-2 px-1 text-[10px] font-semibold text-orange-500/70 uppercase tracking-wider w-10">DNF</th>
+              <th className="text-left py-2 pl-3 pr-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-48">Name</th>
+              <th className="text-left py-2 px-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-56">Team</th>
+              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-16">SPR</th>
+              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-16">CLB</th>
+              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-16">TT</th>
+              <th className="text-center py-2 px-0.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-16">GC</th>
+              <th className="text-center py-2 px-1 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-16">Form</th>
+              <th className="text-center py-2 px-1 text-[10px] font-semibold text-red-500/70 uppercase tracking-wider w-12">DNS</th>
+              <th className="text-center py-2 px-1 text-[10px] font-semibold text-orange-500/70 uppercase tracking-wider w-12">DNF</th>
             </tr>
           </thead>
           <tbody>

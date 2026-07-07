@@ -20,10 +20,10 @@ export function RiderRow({ rider, onUpdate }: Props) {
 
   return (
     <tr className={`border-b border-border/40 hover:bg-card/50 transition-colors ${inactive ? 'opacity-40' : ''}`}>
-      <td className="py-1 pl-3 pr-1 max-w-0 w-36">
+      <td className="py-1 pl-3 pr-1">
         <span className="block truncate text-white font-medium text-xs" title={rider.name}>{rider.name}</span>
       </td>
-      <td className="py-1 px-1 max-w-0 w-32">
+      <td className="py-1 px-1">
         <span className="block truncate text-gray-400 text-xs" title={rider.team}>{rider.team}</span>
       </td>
       {RATINGS.map(attr => (
@@ -31,7 +31,7 @@ export function RiderRow({ rider, onUpdate }: Props) {
           <input
             type="number" min={0} max={100} step={1}
             value={rider[attr]}
-            className="w-10 text-center text-[10px] font-mono font-semibold bg-card border border-border rounded focus:outline-none focus:border-amber-400/60 px-0.5 py-0.5"
+            className="w-12 text-center text-[13px] font-mono font-semibold bg-card border border-border rounded focus:outline-none focus:border-amber-400/60 px-0.5 py-0.5"
             style={{ color: ratingColor(rider[attr]) }}
             onChange={e => onUpdate(rider.rider_id, { [attr]: Number(e.target.value) })}
           />
@@ -41,7 +41,7 @@ export function RiderRow({ rider, onUpdate }: Props) {
         <input
           type="number" min={0.5} max={1.5} step={0.05}
           value={rider.form}
-          className="w-12 text-center text-[10px] font-mono font-semibold bg-card border border-border rounded focus:outline-none focus:border-amber-400/60 px-0.5 py-0.5"
+          className="w-14 text-center text-[13px] font-mono font-semibold bg-card border border-border rounded focus:outline-none focus:border-amber-400/60 px-0.5 py-0.5"
           style={{ color: rider.form > 1.1 ? '#34d399' : rider.form < 0.9 ? '#f87171' : '#9ca3af' }}
           onChange={e => onUpdate(rider.rider_id, { form: Number(e.target.value) })}
         />
