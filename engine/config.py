@@ -80,3 +80,11 @@ DNF_PROB_PER_STAGE_TYPE: dict = {
 # crashes, and riding in front to shelter them from wind and danger.
 # At 0.35×, leaders have ~5% race DNF probability vs ~14% for domestiques.
 TEAM_LEADER_DNF_MULTIPLIER: float = 0.35
+
+# Per-iteration form variation: each iteration draws a lognormal multiplier
+# per rider (mean=1, sigma=FORM_SIGMA) to model good/bad race form.
+# Applied temporarily to rs.form within each iteration; affects both stage win
+# probability (via compute_stage_weights) and time gaps (via time_gaps.py).
+# sigma=0.20 → 68% of forms in [0.82, 1.22]; bad race (p5): form≈0.72
+# This redistributes GC probability from the structural favourites to the field.
+FORM_SIGMA: float = 0.15

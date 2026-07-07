@@ -15,6 +15,7 @@ from engine.config import (
     INTERMEDIATE_SPRINT_POINTS,
     DNF_PROB_PER_STAGE_TYPE,
     TEAM_LEADER_DNF_MULTIPLIER,
+    FORM_SIGMA,
 )
 from engine.performance_model import compute_stage_weights
 from engine.time_gaps import generate_time_gaps
@@ -218,6 +219,17 @@ def _simulate_one_iteration(
 
     stage_results: list[StageResult] = []
 
+    # Per-iteration form variation: draw a race-level performance multiplier for
+    # each rider. This models riders having a generally good or bad Tour —
+    # illness, fatigue, motivation — and creates variance in GC outcomes beyond
+    # what pure rating-based time gaps produce.  The multiplier is applied to
+    # rs.form (already used by compute_stage_weights and time_gaps) and restored
+    # after all stages so calibration state is not mutated between iterations.
+    saved_forms: dict[int, float] = {rid: rs.form for rid, rs in riders.items()}
+    form_noise = rng.lognormal(mean=0.0, sigma=FORM_SIGMA, size=len(riders))
+    for i, (rid, rs) in enumerate(riders.items()):
+        rs.form = saved_forms[rid] * float(form_noise[i])
+
     for stage_num in sorted(stages.keys()):
         stage = stages[stage_num]
 
@@ -274,6 +286,10 @@ def _simulate_one_iteration(
                 time_gaps=gap_map,
             )
         )
+
+    # Restore original form values so calibration state is not mutated.
+    for rid, rs in riders.items():
+        rs.form = saved_forms[rid]
 
     # Draw young rider jersey winner: probability-weighted draw by yr_cal among
     # eligible riders still in the race (excludes mid-race abandonees).

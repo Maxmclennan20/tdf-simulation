@@ -1,4 +1,5 @@
 from __future__ import annotations
+import math
 import numpy as np
 from engine.models import RiderState, StageType
 
@@ -75,10 +76,21 @@ def generate_time_gaps(
         if rid == winner_id:
             gaps[rid] = 0.0
             continue
+        # Form adjusts effective rating: good form slightly narrows deficits,
+        # bad form widens them.  Scale factor 25 means form=0.82 (1-sigma bad)
+        # reduces effective climbing/tt by ~5 points, form=1.22 adds ~5 points.
+        form_adj = 25.0 * math.log(max(0.01, rs.form))
+        # Calibration penalty: when calibration_factor < 1.0 the market implies
+        # this rider underperforms raw ratings (health, team tactics, etc.).
+        # Reduce effective rating by up to 7 pts at cal=0 (0 when cal >= 1.0).
+        # This lets the GC bootstrap actually close the gap for riders like
+        # Vingegaard and Evenepoel whose time gap performance wouldn't otherwise
+        # respond to calibration_factor suppression.
+        cal_penalty = max(0.0, 7.0 * (1.0 - rs.calibration_factor))
         if is_mountain:
-            mu, sigma = _mountain_params(rs.climbing)
+            mu, sigma = _mountain_params(rs.climbing + form_adj - cal_penalty)
         else:
-            mu, sigma = _tt_params(rs.tt)
+            mu, sigma = _tt_params(rs.tt + form_adj - cal_penalty)
         gaps[rid] = float(rng.lognormal(mean=mu, sigma=sigma))
 
     return gaps

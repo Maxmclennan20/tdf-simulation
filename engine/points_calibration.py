@@ -9,6 +9,18 @@ MAX_CALIBRATION_STEPS = 5        # damped iteration steps (total ~75s startup)
 DAMPING = 0.5                    # geometric-mean damping prevents overshoot
 BASE_SEED = 42
 
+# Bootstrap parameters for GC calibration.
+# apply_odds_calibration calibrates mountain-stage win probability, but GC is
+# also decided by TT stages.  Riders with high TT ratings (e.g. Evenepoel tt=97)
+# or mediocre mountain but good all-round ratings win the GC far more than their
+# mountain-stage calibration implies.  Bootstrap measures actual GC win rates.
+GC_BOOTSTRAP_ITERS_PER_STEP = 2000  # iterations per step (higher = more stable with form noise)
+GC_MAX_CALIBRATION_STEPS = 12       # 12 steps balances convergence vs startup time with form noise
+GC_MAX_CAL_FACTOR = 100.0           # hard ceiling: prevents TT-weak riders (Seixas, Del Toro) from
+                                    # inflating calibration_factor to 1000+ without improving GC rate
+GC_DAMPING = 0.5
+GC_BASE_SEED = 542
+
 # Riders not in the points_win market are extreme longshots.
 DEFAULT_UNRATED_ODDS = 1001.0
 
@@ -188,3 +200,93 @@ def apply_young_rider_calibration(
     # Set yr_cal = normalised market probability (draw weight in _simulate_one_iteration)
     for rid in eligible:
         riders[rid].young_rider_calibration_factor = raw[rid] / total
+
+
+def apply_gc_bootstrap_calibration(
+    riders: dict[int, RiderState],
+    stages: dict[int, Stage],
+    odds: dict[int, dict[str, float]],
+) -> None:
+    """
+    Fine-tune calibration_factor for all covered GC riders via damped iterative bootstrap.
+
+    WHY BOOTSTRAP ON TOP OF apply_odds_calibration?
+
+    apply_odds_calibration sets calibration_factor = p_market / p_model where
+    p_model is the mountain-stage win probability.  But the GC is not decided
+    purely on mountain stages — TT stages add significant time.  Riders with
+    high TT ratings (e.g. Evenepoel tt=97) gain disproportionate GC time in
+    TTs, winning the GC far more often than their mountain-weight calibration
+    implies.  Conversely strong climbers that are TT-weak (e.g. Seixas tt=72)
+    win the GC less than expected.
+
+    The bootstrap runs the full 21-stage simulation, measures actual GC win
+    rates, and applies damped bisection corrections — identical in structure to
+    the green jersey calibration.
+
+    WHY ALL COVERED RIDERS (including 251-odds longshots)?
+
+    Riders with gc_win=251 odds (target ~0.3% each) often show up at 2-4% in
+    simulation because good all-round ratings give them time gains in TTs.
+    With ~30 such riders, they collectively steal ~40% of probability away from
+    the favourites.  Suppressing them via bootstrap restores that probability to
+    Pogacar, Vingegaard, etc.
+
+    Must be called AFTER apply_odds_calibration + apply_ranking_calibration so
+    that the starting calibration_factor values are already sensible.
+    """
+    from engine.monte_carlo import run_simulation
+
+    active = {rid: rs for rid, rs in riders.items() if rs.is_active()}
+
+    # Market-implied probabilities for ALL covered GC riders (normalised)
+    raw_market: dict[int, float] = {}
+    for rid, rs in active.items():
+        if rid in odds and "gc_win" in odds[rid]:
+            raw_market[rid] = 1.0 / odds[rid]["gc_win"]
+    if not raw_market:
+        return
+    total_market = sum(raw_market.values())
+    p_market = {rid: v / total_market for rid, v in raw_market.items()}
+
+    for step in range(GC_MAX_CALIBRATION_STEPS):
+        iters = run_simulation(
+            riders, stages,
+            n_iterations=GC_BOOTSTRAP_ITERS_PER_STEP,
+            seed=GC_BASE_SEED + step,
+        )
+
+        # Measure GC win rates
+        wins: dict[int, int] = defaultdict(int)
+        for it in iters:
+            ranked = sorted(it.gc_times.items(), key=lambda x: x[1])
+            if ranked:
+                wins[ranked[0][0]] += 1
+        n = len(iters)
+        p_sim = {rid: cnt / n for rid, cnt in wins.items()}
+
+        if not p_sim:
+            break
+
+        for rid in p_market:
+            if rid not in riders or not riders[rid].is_active():
+                continue
+            p_s = p_sim.get(rid, 0.0)
+            p_m = p_market[rid]
+
+            if p_s > 0 and p_m > 0:
+                multiplier = (p_m / p_s) ** GC_DAMPING
+                riders[rid].calibration_factor *= multiplier
+            elif p_m > 0:
+                # Covered rider never won in this step — gentle nudge up.
+                # Using 1.1 (not 1.5) prevents TT-weak riders like Seixas from
+                # exploding to cal=5000 when their structural TT ceiling means
+                # no amount of mountain-stage boosting achieves their market GC %.
+                riders[rid].calibration_factor *= 1.1
+
+            # Hard ceiling: prevents calibration divergence for riders whose
+            # TT deficit structurally limits their GC win probability below
+            # their market odds (e.g. Seixas tt=72 → ~880s TT loss per race).
+            riders[rid].calibration_factor = min(
+                GC_MAX_CAL_FACTOR, riders[rid].calibration_factor
+            )
