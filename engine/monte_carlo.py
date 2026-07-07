@@ -14,6 +14,7 @@ from engine.config import (
     INTERMEDIATE_SPRINT_STAGES,
     INTERMEDIATE_SPRINT_POINTS,
     DNF_PROB_PER_STAGE_TYPE,
+    TEAM_LEADER_DNF_MULTIPLIER,
 )
 from engine.performance_model import compute_stage_weights
 from engine.time_gaps import generate_time_gaps
@@ -222,9 +223,12 @@ def _simulate_one_iteration(
 
         # Roll for mid-race abandonment before each stage begins.
         # Only pre-race-active riders who haven't already abandoned are at risk.
-        dnf_prob = DNF_PROB_PER_STAGE_TYPE.get(stage.type, 0.007)
+        # Team leaders have reduced DNF probability: teammates donate equipment
+        # after mechanicals and pace them back after crashes.
+        base_dnf_prob = DNF_PROB_PER_STAGE_TYPE.get(stage.type, 0.007)
         for rid, rs in riders.items():
             if rs.is_active() and rid not in mid_race_dnf_ids:
+                dnf_prob = base_dnf_prob * (TEAM_LEADER_DNF_MULTIPLIER if rs.rider.team_leader else 1.0)
                 if rng.random() < dnf_prob:
                     mid_race_dnf_ids.add(rid)
                     cumulative_gc[rid] = float("inf")

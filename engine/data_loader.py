@@ -96,6 +96,7 @@ def load_all_data(data_dir: Path) -> tuple[
                 birth_year=int(row["birth_year"]),
                 uci_ranking=int(row["uci_ranking"]),
                 young_rider_eligible=str(row["young_rider_eligible"]).lower() == "true",
+                team_leader=str(row.get("team_leader", "false")).lower() == "true",
             )
             rat = ratings_map.get(rid, {})
             riders[rid] = RiderState(

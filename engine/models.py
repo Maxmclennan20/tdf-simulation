@@ -19,6 +19,7 @@ class Rider:
     birth_year: int
     uci_ranking: int
     young_rider_eligible: bool
+    team_leader: bool = False
 
 
 @dataclass

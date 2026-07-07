@@ -73,3 +73,10 @@ DNF_PROB_PER_STAGE_TYPE: dict = {
     StageType.MOUNTAIN: 0.0060,
     StageType.TT:       0.0025,
 }
+
+# Team leaders (marked team_leader=True in riders.csv) have significantly lower
+# DNF risk because teammates sacrifice their own race to protect the leader —
+# handing over wheels after punctures, pacing them back to the peloton after
+# crashes, and riding in front to shelter them from wind and danger.
+# At 0.35×, leaders have ~5% race DNF probability vs ~14% for domestiques.
+TEAM_LEADER_DNF_MULTIPLIER: float = 0.35

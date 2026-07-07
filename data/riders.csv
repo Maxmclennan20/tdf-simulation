@@ -1,174 +1,174 @@
-rider_id,name,team,nationality,birth_year,uci_ranking,young_rider_eligible
-1,Tadej Pogacar,UAE Team Emirates,SVN,1998,1,false
-2,Isaac Del Toro,UAE Team Emirates,MEX,2003,45,true
-3,Tim Wellens,UAE Team Emirates,BEL,1991,120,false
-4,Brandon McNulty,UAE Team Emirates,USA,1998,35,false
-5,Adam Yates,UAE Team Emirates,GBR,1992,22,false
-6,Florian Vermeersch,UAE Team Emirates,BEL,1992,180,false
-7,Nils Politt,UAE Team Emirates,GER,1994,95,false
-8,Felix Grossschartner,UAE Team Emirates,AUT,1993,110,false
-9,Jasper Philipsen,Alpecin-Premier Tech,BEL,1998,5,false
-10,Mathieu Van der Poel,Alpecin-Premier Tech,NED,1995,4,false
-11,Emiel Verstrynge,Alpecin-Premier Tech,BEL,2002,200,true
-12,Jonas Rickaert,Alpecin-Premier Tech,BEL,1994,250,false
-13,Tim Marsman,Alpecin-Premier Tech,NED,1998,280,false
-14,Ramses Debruyne,Alpecin-Premier Tech,BEL,2004,350,true
-15,Edward Planckaert,Alpecin-Premier Tech,BEL,1990,300,false
-16,Silvan Dillier,Alpecin-Premier Tech,SUI,1990,320,false
-17,Antonio Tiberi,Bahrain Victorious,ITA,2001,28,true
-18,Lenny Martinez,Bahrain Victorious,FRA,2002,55,true
-19,Matej Mohoric,Bahrain Victorious,SVN,1994,62,false
-20,Phil Bauhaus,Bahrain Victorious,GER,1994,85,false
-21,Damiano Caruso,Bahrain Victorious,ITA,1987,150,false
-22,Kamil Gradek,Bahrain Victorious,POL,1990,320,false
-23,Robert Stannard,Bahrain Victorious,AUS,1998,380,false
-24,Vlad Van Mechelen,Bahrain Victorious,BEL,2002,400,true
-25,Paul Seixas,Decathlon CMA CGM,POR,2004,155,true
-26,Olav Kooij,Decathlon CMA CGM,NED,2001,15,true
-27,Matthew Riccitello,Decathlon CMA CGM,ITA,2002,290,true
-28,Tiesj Benoot,Decathlon CMA CGM,BEL,1994,70,false
-29,Daan Hoole,Decathlon CMA CGM,NED,1999,160,false
-30,Nicolas Prodhomme,Decathlon CMA CGM,FRA,1996,210,false
-31,Aurelien Paret-Peintre,Decathlon CMA CGM,FRA,1999,130,false
-32,Cees Bol,Decathlon CMA CGM,NED,1995,175,false
-33,Ben Healy,EF Education-EasyPost,IRL,2000,38,false
-34,Kasper Asgreen,EF Education-EasyPost,DEN,1997,65,false
-35,Richard Carapaz,EF Education-EasyPost,ECU,1993,30,false
-36,Alex Baudin,EF Education-EasyPost,FRA,1999,260,false
-37,Sean Quinn,EF Education-EasyPost,USA,1999,195,false
-38,Georg Steinhauser,EF Education-EasyPost,GER,2001,145,true
-39,Max Walker,EF Education-EasyPost,GBR,2000,310,false
-40,Michael Valgren,EF Education-EasyPost,DEN,1992,230,false
-41,Guillaume Martin,Groupama-FDJ,FRA,1993,42,false
-42,Romain Gregoire,Groupama-FDJ,FRA,2002,80,true
-43,Clement Berthet,Groupama-FDJ,FRA,2000,360,false
-44,Clement Braz Afonso,Groupama-FDJ,POR,2004,290,true
-45,Lorenzo Germani,Groupama-FDJ,ITA,2000,220,false
-46,Quentin Pacher,Groupama-FDJ,FRA,1992,285,false
-47,Clement Russo,Groupama-FDJ,FRA,2001,340,true
-48,Ewen Costiou,Groupama-FDJ,FRA,1997,330,false
-49,Juan Ayuso,Lidl-Trek,ESP,2002,6,true
-50,Mads Pedersen,Lidl-Trek,DEN,1995,10,false
-51,Mathias Vacek,Lidl-Trek,CZE,2003,115,true
-52,Mattias Skjelmose,Lidl-Trek,DEN,2001,24,true
-53,Quinn Simmons,Lidl-Trek,USA,2000,140,false
-54,Derek Gee-West,Lidl-Trek,CAN,1996,60,false
-55,Carlos Verona,Lidl-Trek,ESP,1992,165,false
-56,Toms Skujins,Lidl-Trek,LAT,1991,190,false
-57,Arnaud De Lie,Lotto Intermarche,BEL,2002,18,true
-58,Lennert Van Eetvelt,Lotto Intermarche,BEL,2002,40,true
-59,Georg Zimmermann,Lotto Intermarche,GER,1997,90,false
-60,Huub Artz,Lotto Intermarche,NED,2001,270,true
-61,Jenno Berckmoes,Lotto Intermarche,BEL,2002,305,true
-62,Liam Slock,Lotto Intermarche,BEL,2002,395,true
-63,Lars Craps,Lotto Intermarche,BEL,2002,415,true
-64,Baptiste Veistroffer,Lotto Intermarche,FRA,1998,430,false
-65,Biniam Girmay,NSN Cycling Team,ERI,2000,8,false
-66,Jake Stewart,NSN Cycling Team,GBR,1999,98,false
-67,Lewis Askey,NSN Cycling Team,GBR,2003,420,true
-68,Krists Neilands,NSN Cycling Team,LAT,1990,245,false
-69,Marco Frigo,NSN Cycling Team,ITA,2001,355,true
-70,Matis Louvel,NSN Cycling Team,FRA,2001,440,true
-71,George Bennett,NSN Cycling Team,NZL,1990,50,false
-72,Tom Van Asbroeck,NSN Cycling Team,BEL,1990,265,false
-73,Tim Van Dijke,Red Bull-Bora-Hansgrohe,NED,2000,170,false
-74,Remco Evenepoel,Red Bull-Bora-Hansgrohe,BEL,2000,3,false
-75,Nico Denz,Red Bull-Bora-Hansgrohe,GER,1994,135,false
-76,Florian Lipowitz,Red Bull-Bora-Hansgrohe,GER,2001,20,true
-77,Mattia Cattaneo,Red Bull-Bora-Hansgrohe,ITA,1990,205,false
-78,Jan Tratnik,Red Bull-Bora-Hansgrohe,SVN,1990,215,false
-79,Maxim Van Gils,Red Bull-Bora-Hansgrohe,BEL,2000,32,false
-80,Jai Hindley,Red Bull-Bora-Hansgrohe,AUS,1996,26,false
-81,Valentin Paret-Peintre,Soudal Quick-Step,FRA,1993,75,false
-82,Mikel Landa,Soudal Quick-Step,ESP,1989,36,false
-83,Tim Merlier,Soudal Quick-Step,BEL,1992,14,false
-84,Jasper Stuyven,Soudal Quick-Step,BEL,1992,68,false
-85,Ilan Van Wilder,Soudal Quick-Step,BEL,2000,58,false
-86,Louis Vervaeke,Soudal Quick-Step,BEL,1995,240,false
-87,Dylan Van Baarle,Soudal Quick-Step,NED,1992,85,false
-88,Bert Van Lerberghe,Soudal Quick-Step,BEL,1992,255,false
-89,Michael Matthews,Team Jayco AlUla,AUS,1990,16,false
-90,Luke Plapp,Team Jayco AlUla,AUS,2000,48,false
-91,Pascal Ackermann,Team Jayco AlUla,GER,1994,52,false
-92,Ben O'Connor,Team Jayco AlUla,AUS,1995,27,false
-93,Mauro Schmid,Team Jayco AlUla,SUI,1999,100,false
-94,Kelland O'Brien,Team Jayco AlUla,IRL,2000,345,false
-95,Felix Engelhardt,Team Jayco AlUla,GER,2001,375,true
-96,Luke Durbridge,Team Jayco AlUla,AUS,1991,225,false
-97,Pavel Bittner,Team Picnic PostNL,CZE,2002,460,true
-98,Warren Barguil,Team Picnic PostNL,FRA,1992,105,false
-99,Frank Van Den Broek,Team Picnic PostNL,NED,2001,450,true
-100,Robbe Dhondt,Team Picnic PostNL,BEL,2002,335,true
-101,Julius Van Den Berg,Team Picnic PostNL,NED,1999,185,false
-102,Niklas Markl,Team Picnic PostNL,GER,2001,410,true
-103,Frits Biesterbos,Team Picnic PostNL,NED,2001,470,true
-104,John Degenkolb,Team Picnic PostNL,GER,1989,125,false
-105,Victor Campenaerts,Team Visma-Lease a Bike,BEL,1991,44,false
-106,Edoardo Affini,Team Visma-Lease a Bike,ITA,1996,72,false
-107,Per Strand Hagenes,Team Visma-Lease a Bike,NOR,2003,88,true
-108,Matteo Jorgenson,Team Visma-Lease a Bike,USA,1999,12,false
-109,Sepp Kuss,Team Visma-Lease a Bike,USA,1994,33,false
-110,Bruno Armirail,Team Visma-Lease a Bike,FRA,1994,155,false
-111,Davide Piganzoli,Team Visma-Lease a Bike,ITA,2002,230,true
-112,Jonas Vingegaard,Team Visma-Lease a Bike,DEN,1996,2,false
-113,Magnus Cort,Uno-X Mobility,DEN,1993,60,false
-114,Tobias Halland Johannessen,Uno-X Mobility,NOR,1999,78,false
-115,Anders Skaarseth,Uno-X Mobility,NOR,2002,325,true
-116,Soren Waerenskjold,Uno-X Mobility,NOR,1998,145,false
-117,Anthon Charmig,Uno-X Mobility,DEN,1999,195,false
-118,Jonas Abrahamsen,Uno-X Mobility,NOR,1995,235,false
-119,Torstein Traen,Uno-X Mobility,NOR,1998,300,false
-120,Anders Halland Johannessen,Uno-X Mobility,NOR,2003,92,true
-121,Mike Teunissen,XDS Astana Team,NED,1992,82,false
-122,Sergio Higuita,XDS Astana Team,COL,1997,37,false
-123,Harold Tejada,XDS Astana Team,COL,1997,118,false
-124,Max Kanter,XDS Astana Team,GER,1999,150,false
-125,Nicolas Vinokurov,XDS Astana Team,KAZ,2003,160,true
-126,Davide Ballerini,XDS Astana Team,ITA,1994,112,false
-127,Aaron Gate,XDS Astana Team,NZL,1994,390,false
-128,Simone Velasco,XDS Astana Team,ITA,1995,280,false
-129,Piet Allegaert,Cofidis,BEL,1995,295,false
-130,Jenthe Biermans,Cofidis,BEL,1995,198,false
-131,Milan Fretin,Cofidis,FRA,1999,370,false
-132,Alex Kirsch,Cofidis,LUX,1992,245,false
-133,Hugo Page,Cofidis,FRA,2000,200,false
-134,Alex Aranburu,Cofidis,ESP,1995,92,false
-135,Benjamin Thomas,Cofidis,FRA,1995,108,false
-136,Ion Izagirre,Cofidis,ESP,1989,78,false
-137,Julian Alaphilippe,Tudor Pro Cycling Team,FRA,1992,19,false
-138,Matteo Trentin,Tudor Pro Cycling Team,ITA,1989,102,false
-139,Michael Storer,Tudor Pro Cycling Team,AUS,1997,82,false
-140,Rick Pluimers,Tudor Pro Cycling Team,NED,2001,320,true
-141,Arvid De Kleijn,Tudor Pro Cycling Team,NED,1998,175,false
-142,Marco Haller,Tudor Pro Cycling Team,AUT,1991,240,false
-143,Marc Hirschi,Tudor Pro Cycling Team,SUI,1998,42,false
-144,Yannis Voisard,Tudor Pro Cycling Team,SUI,2000,355,false
-145,Jordan Jegat,TotalEnergies,FRA,2002,430,true
-146,Alexandre Delettre,TotalEnergies,FRA,1995,285,false
-147,Anthony Turgis,TotalEnergies,FRA,1994,55,false
-148,Matteo Vercher,TotalEnergies,ESP,1998,315,false
-149,Mathis Le Berre,TotalEnergies,FRA,2001,365,true
-150,Nicolas Breuillard,TotalEnergies,FRA,1999,385,false
-151,Joris Delbove,TotalEnergies,FRA,2002,440,true
-152,Thibault Guernalec,TotalEnergies,FRA,2001,405,true
-153,Alex Molenaar,Caja Rural-Seguros RGA,NED,1997,248,false
-154,Joel Nicolau,Caja Rural-Seguros RGA,ESP,1998,195,false
-155,Abel Balderstone,Caja Rural-Seguros RGA,AUS,2002,410,true
-156,Sebastian Berwick,Caja Rural-Seguros RGA,AUS,2001,425,true
-157,Fernando Gaviria,Caja Rural-Seguros RGA,COL,1994,68,false
-158,Stefano Oldani,Caja Rural-Seguros RGA,ITA,1998,185,false
-159,Jakub Otruba,Caja Rural-Seguros RGA,CZE,1998,295,false
-160,Jose Felix Parra,Caja Rural-Seguros RGA,COL,1999,360,false
-161,Filippo Ganna,Netcompany INEOS,ITA,1996,11,false
-162,Carlos Rodriguez,Netcompany INEOS,ESP,2001,7,true
-163,Michal Kwiatkowski,Netcompany INEOS,POL,1990,45,false
-164,Kevin Vauquelin,Netcompany INEOS,FRA,2001,48,true
-165,Dorian Godon,Netcompany INEOS,FRA,1996,96,false
-166,Thymen Arensman,Netcompany INEOS,NED,2000,39,false
-167,Cian Uijtdebroeks,Movistar Team,BEL,2003,17,true
-168,Einer Rubio,Movistar Team,COL,1998,52,false
-169,Pablo Castrillo,Movistar Team,ESP,1998,275,false
-170,Roger Adria,Movistar Team,ESP,2001,310,true
-171,Thomas Pidcock,Pinarello Q36.5,GBR,2000,9,false
-172,Fred Wright,Pinarello Q36.5,GBR,1999,66,false
-173,Quinten Hermans,Pinarello Q36.5,BEL,1995,130,false
+rider_id,name,team,nationality,birth_year,uci_ranking,young_rider_eligible,team_leader
+1,Tadej Pogacar,UAE Team Emirates,SVN,1998,1,false,true
+2,Isaac Del Toro,UAE Team Emirates,MEX,2003,45,true,true
+3,Tim Wellens,UAE Team Emirates,BEL,1991,120,false,false
+4,Brandon McNulty,UAE Team Emirates,USA,1998,35,false,false
+5,Adam Yates,UAE Team Emirates,GBR,1992,22,false,false
+6,Florian Vermeersch,UAE Team Emirates,BEL,1992,180,false,false
+7,Nils Politt,UAE Team Emirates,GER,1994,95,false,false
+8,Felix Grossschartner,UAE Team Emirates,AUT,1993,110,false,false
+9,Jasper Philipsen,Alpecin-Premier Tech,BEL,1998,5,false,true
+10,Mathieu Van der Poel,Alpecin-Premier Tech,NED,1995,4,false,true
+11,Emiel Verstrynge,Alpecin-Premier Tech,BEL,2002,200,true,false
+12,Jonas Rickaert,Alpecin-Premier Tech,BEL,1994,250,false,false
+13,Tim Marsman,Alpecin-Premier Tech,NED,1998,280,false,false
+14,Ramses Debruyne,Alpecin-Premier Tech,BEL,2004,350,true,false
+15,Edward Planckaert,Alpecin-Premier Tech,BEL,1990,300,false,false
+16,Silvan Dillier,Alpecin-Premier Tech,SUI,1990,320,false,false
+17,Antonio Tiberi,Bahrain Victorious,ITA,2001,28,true,true
+18,Lenny Martinez,Bahrain Victorious,FRA,2002,55,true,false
+19,Matej Mohoric,Bahrain Victorious,SVN,1994,62,false,false
+20,Phil Bauhaus,Bahrain Victorious,GER,1994,85,false,false
+21,Damiano Caruso,Bahrain Victorious,ITA,1987,150,false,false
+22,Kamil Gradek,Bahrain Victorious,POL,1990,320,false,false
+23,Robert Stannard,Bahrain Victorious,AUS,1998,380,false,false
+24,Vlad Van Mechelen,Bahrain Victorious,BEL,2002,400,true,false
+25,Paul Seixas,Decathlon CMA CGM,POR,2004,155,true,true
+26,Olav Kooij,Decathlon CMA CGM,NED,2001,15,true,true
+27,Matthew Riccitello,Decathlon CMA CGM,ITA,2002,290,true,false
+28,Tiesj Benoot,Decathlon CMA CGM,BEL,1994,70,false,false
+29,Daan Hoole,Decathlon CMA CGM,NED,1999,160,false,false
+30,Nicolas Prodhomme,Decathlon CMA CGM,FRA,1996,210,false,false
+31,Aurelien Paret-Peintre,Decathlon CMA CGM,FRA,1999,130,false,false
+32,Cees Bol,Decathlon CMA CGM,NED,1995,175,false,false
+33,Ben Healy,EF Education-EasyPost,IRL,2000,38,false,false
+34,Kasper Asgreen,EF Education-EasyPost,DEN,1997,65,false,false
+35,Richard Carapaz,EF Education-EasyPost,ECU,1993,30,false,true
+36,Alex Baudin,EF Education-EasyPost,FRA,1999,260,false,false
+37,Sean Quinn,EF Education-EasyPost,USA,1999,195,false,false
+38,Georg Steinhauser,EF Education-EasyPost,GER,2001,145,true,false
+39,Max Walker,EF Education-EasyPost,GBR,2000,310,false,false
+40,Michael Valgren,EF Education-EasyPost,DEN,1992,230,false,false
+41,Guillaume Martin,Groupama-FDJ,FRA,1993,42,false,true
+42,Romain Gregoire,Groupama-FDJ,FRA,2002,80,true,false
+43,Clement Berthet,Groupama-FDJ,FRA,2000,360,false,false
+44,Clement Braz Afonso,Groupama-FDJ,POR,2004,290,true,false
+45,Lorenzo Germani,Groupama-FDJ,ITA,2000,220,false,false
+46,Quentin Pacher,Groupama-FDJ,FRA,1992,285,false,false
+47,Clement Russo,Groupama-FDJ,FRA,2001,340,true,false
+48,Ewen Costiou,Groupama-FDJ,FRA,1997,330,false,false
+49,Juan Ayuso,Lidl-Trek,ESP,2002,6,true,true
+50,Mads Pedersen,Lidl-Trek,DEN,1995,10,false,true
+51,Mathias Vacek,Lidl-Trek,CZE,2003,115,true,false
+52,Mattias Skjelmose,Lidl-Trek,DEN,2001,24,true,false
+53,Quinn Simmons,Lidl-Trek,USA,2000,140,false,false
+54,Derek Gee-West,Lidl-Trek,CAN,1996,60,false,false
+55,Carlos Verona,Lidl-Trek,ESP,1992,165,false,false
+56,Toms Skujins,Lidl-Trek,LAT,1991,190,false,false
+57,Arnaud De Lie,Lotto Intermarche,BEL,2002,18,true,true
+58,Lennert Van Eetvelt,Lotto Intermarche,BEL,2002,40,true,true
+59,Georg Zimmermann,Lotto Intermarche,GER,1997,90,false,false
+60,Huub Artz,Lotto Intermarche,NED,2001,270,true,false
+61,Jenno Berckmoes,Lotto Intermarche,BEL,2002,305,true,false
+62,Liam Slock,Lotto Intermarche,BEL,2002,395,true,false
+63,Lars Craps,Lotto Intermarche,BEL,2002,415,true,false
+64,Baptiste Veistroffer,Lotto Intermarche,FRA,1998,430,false,false
+65,Biniam Girmay,NSN Cycling Team,ERI,2000,8,false,true
+66,Jake Stewart,NSN Cycling Team,GBR,1999,98,false,false
+67,Lewis Askey,NSN Cycling Team,GBR,2003,420,true,false
+68,Krists Neilands,NSN Cycling Team,LAT,1990,245,false,false
+69,Marco Frigo,NSN Cycling Team,ITA,2001,355,true,false
+70,Matis Louvel,NSN Cycling Team,FRA,2001,440,true,false
+71,George Bennett,NSN Cycling Team,NZL,1990,50,false,false
+72,Tom Van Asbroeck,NSN Cycling Team,BEL,1990,265,false,false
+73,Tim Van Dijke,Red Bull-Bora-Hansgrohe,NED,2000,170,false,false
+74,Remco Evenepoel,Red Bull-Bora-Hansgrohe,BEL,2000,3,false,true
+75,Nico Denz,Red Bull-Bora-Hansgrohe,GER,1994,135,false,false
+76,Florian Lipowitz,Red Bull-Bora-Hansgrohe,GER,2001,20,true,true
+77,Mattia Cattaneo,Red Bull-Bora-Hansgrohe,ITA,1990,205,false,false
+78,Jan Tratnik,Red Bull-Bora-Hansgrohe,SVN,1990,215,false,false
+79,Maxim Van Gils,Red Bull-Bora-Hansgrohe,BEL,2000,32,false,false
+80,Jai Hindley,Red Bull-Bora-Hansgrohe,AUS,1996,26,false,false
+81,Valentin Paret-Peintre,Soudal Quick-Step,FRA,1993,75,false,false
+82,Mikel Landa,Soudal Quick-Step,ESP,1989,36,false,true
+83,Tim Merlier,Soudal Quick-Step,BEL,1992,14,false,true
+84,Jasper Stuyven,Soudal Quick-Step,BEL,1992,68,false,false
+85,Ilan Van Wilder,Soudal Quick-Step,BEL,2000,58,false,false
+86,Louis Vervaeke,Soudal Quick-Step,BEL,1995,240,false,false
+87,Dylan Van Baarle,Soudal Quick-Step,NED,1992,85,false,false
+88,Bert Van Lerberghe,Soudal Quick-Step,BEL,1992,255,false,false
+89,Michael Matthews,Team Jayco AlUla,AUS,1990,16,false,true
+90,Luke Plapp,Team Jayco AlUla,AUS,2000,48,false,false
+91,Pascal Ackermann,Team Jayco AlUla,GER,1994,52,false,false
+92,Ben O'Connor,Team Jayco AlUla,AUS,1995,27,false,true
+93,Mauro Schmid,Team Jayco AlUla,SUI,1999,100,false,false
+94,Kelland O'Brien,Team Jayco AlUla,IRL,2000,345,false,false
+95,Felix Engelhardt,Team Jayco AlUla,GER,2001,375,true,false
+96,Luke Durbridge,Team Jayco AlUla,AUS,1991,225,false,false
+97,Pavel Bittner,Team Picnic PostNL,CZE,2002,460,true,false
+98,Warren Barguil,Team Picnic PostNL,FRA,1992,105,false,false
+99,Frank Van Den Broek,Team Picnic PostNL,NED,2001,450,true,false
+100,Robbe Dhondt,Team Picnic PostNL,BEL,2002,335,true,false
+101,Julius Van Den Berg,Team Picnic PostNL,NED,1999,185,false,false
+102,Niklas Markl,Team Picnic PostNL,GER,2001,410,true,false
+103,Frits Biesterbos,Team Picnic PostNL,NED,2001,470,true,false
+104,John Degenkolb,Team Picnic PostNL,GER,1989,125,false,false
+105,Victor Campenaerts,Team Visma-Lease a Bike,BEL,1991,44,false,false
+106,Edoardo Affini,Team Visma-Lease a Bike,ITA,1996,72,false,false
+107,Per Strand Hagenes,Team Visma-Lease a Bike,NOR,2003,88,true,false
+108,Matteo Jorgenson,Team Visma-Lease a Bike,USA,1999,12,false,true
+109,Sepp Kuss,Team Visma-Lease a Bike,USA,1994,33,false,false
+110,Bruno Armirail,Team Visma-Lease a Bike,FRA,1994,155,false,false
+111,Davide Piganzoli,Team Visma-Lease a Bike,ITA,2002,230,true,false
+112,Jonas Vingegaard,Team Visma-Lease a Bike,DEN,1996,2,false,true
+113,Magnus Cort,Uno-X Mobility,DEN,1993,60,false,false
+114,Tobias Halland Johannessen,Uno-X Mobility,NOR,1999,78,false,true
+115,Anders Skaarseth,Uno-X Mobility,NOR,2002,325,true,false
+116,Soren Waerenskjold,Uno-X Mobility,NOR,1998,145,false,false
+117,Anthon Charmig,Uno-X Mobility,DEN,1999,195,false,false
+118,Jonas Abrahamsen,Uno-X Mobility,NOR,1995,235,false,false
+119,Torstein Traen,Uno-X Mobility,NOR,1998,300,false,false
+120,Anders Halland Johannessen,Uno-X Mobility,NOR,2003,92,true,false
+121,Mike Teunissen,XDS Astana Team,NED,1992,82,false,false
+122,Sergio Higuita,XDS Astana Team,COL,1997,37,false,true
+123,Harold Tejada,XDS Astana Team,COL,1997,118,false,false
+124,Max Kanter,XDS Astana Team,GER,1999,150,false,false
+125,Nicolas Vinokurov,XDS Astana Team,KAZ,2003,160,true,false
+126,Davide Ballerini,XDS Astana Team,ITA,1994,112,false,false
+127,Aaron Gate,XDS Astana Team,NZL,1994,390,false,false
+128,Simone Velasco,XDS Astana Team,ITA,1995,280,false,false
+129,Piet Allegaert,Cofidis,BEL,1995,295,false,false
+130,Jenthe Biermans,Cofidis,BEL,1995,198,false,false
+131,Milan Fretin,Cofidis,FRA,1999,370,false,false
+132,Alex Kirsch,Cofidis,LUX,1992,245,false,false
+133,Hugo Page,Cofidis,FRA,2000,200,false,false
+134,Alex Aranburu,Cofidis,ESP,1995,92,false,false
+135,Benjamin Thomas,Cofidis,FRA,1995,108,false,false
+136,Ion Izagirre,Cofidis,ESP,1989,78,false,true
+137,Julian Alaphilippe,Tudor Pro Cycling Team,FRA,1992,19,false,true
+138,Matteo Trentin,Tudor Pro Cycling Team,ITA,1989,102,false,false
+139,Michael Storer,Tudor Pro Cycling Team,AUS,1997,82,false,false
+140,Rick Pluimers,Tudor Pro Cycling Team,NED,2001,320,true,false
+141,Arvid De Kleijn,Tudor Pro Cycling Team,NED,1998,175,false,false
+142,Marco Haller,Tudor Pro Cycling Team,AUT,1991,240,false,false
+143,Marc Hirschi,Tudor Pro Cycling Team,SUI,1998,42,false,false
+144,Yannis Voisard,Tudor Pro Cycling Team,SUI,2000,355,false,false
+145,Jordan Jegat,TotalEnergies,FRA,2002,430,true,false
+146,Alexandre Delettre,TotalEnergies,FRA,1995,285,false,false
+147,Anthony Turgis,TotalEnergies,FRA,1994,55,false,true
+148,Matteo Vercher,TotalEnergies,ESP,1998,315,false,false
+149,Mathis Le Berre,TotalEnergies,FRA,2001,365,true,false
+150,Nicolas Breuillard,TotalEnergies,FRA,1999,385,false,false
+151,Joris Delbove,TotalEnergies,FRA,2002,440,true,false
+152,Thibault Guernalec,TotalEnergies,FRA,2001,405,true,false
+153,Alex Molenaar,Caja Rural-Seguros RGA,NED,1997,248,false,false
+154,Joel Nicolau,Caja Rural-Seguros RGA,ESP,1998,195,false,false
+155,Abel Balderstone,Caja Rural-Seguros RGA,AUS,2002,410,true,false
+156,Sebastian Berwick,Caja Rural-Seguros RGA,AUS,2001,425,true,false
+157,Fernando Gaviria,Caja Rural-Seguros RGA,COL,1994,68,false,true
+158,Stefano Oldani,Caja Rural-Seguros RGA,ITA,1998,185,false,false
+159,Jakub Otruba,Caja Rural-Seguros RGA,CZE,1998,295,false,false
+160,Jose Felix Parra,Caja Rural-Seguros RGA,COL,1999,360,false,false
+161,Filippo Ganna,Netcompany INEOS,ITA,1996,11,false,true
+162,Carlos Rodriguez,Netcompany INEOS,ESP,2001,7,true,true
+163,Michal Kwiatkowski,Netcompany INEOS,POL,1990,45,false,false
+164,Kevin Vauquelin,Netcompany INEOS,FRA,2001,48,true,false
+165,Dorian Godon,Netcompany INEOS,FRA,1996,96,false,false
+166,Thymen Arensman,Netcompany INEOS,NED,2000,39,false,false
+167,Cian Uijtdebroeks,Movistar Team,BEL,2003,17,true,true
+168,Einer Rubio,Movistar Team,COL,1998,52,false,false
+169,Pablo Castrillo,Movistar Team,ESP,1998,275,false,false
+170,Roger Adria,Movistar Team,ESP,2001,310,true,false
+171,Thomas Pidcock,Pinarello Q36.5,GBR,2000,9,false,true
+172,Fred Wright,Pinarello Q36.5,GBR,1999,66,false,false
+173,Quinten Hermans,Pinarello Q36.5,BEL,1995,130,false,false
