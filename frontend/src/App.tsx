@@ -20,7 +20,7 @@ function App() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full bg-surface">
-        <div className="text-gray-400 text-sm animate-pulse">Loading riders…</div>
+        <div className="text-gray-600 text-sm animate-pulse">Loading riders…</div>
       </div>
     );
   }
@@ -32,7 +32,7 @@ function App() {
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded bg-amber-400 flex items-center justify-center text-black font-bold text-xs">TdF</div>
           <div>
-            <h1 className="text-white font-semibold text-sm leading-tight">Tour de France 2026</h1>
+            <h1 className="text-gray-900 font-semibold text-sm leading-tight">Tour de France 2026</h1>
             <p className="text-gray-500 text-xs">Monte Carlo Simulation · 20,000 iterations</p>
           </div>
         </div>
@@ -43,8 +43,8 @@ function App() {
             onClick={() => setActiveTab('riders')}
             className={`px-4 py-1.5 text-xs font-medium rounded transition-colors ${
               activeTab === 'riders'
-                ? 'bg-surface text-white shadow-sm'
-                : 'text-gray-500 hover:text-gray-300'
+                ? 'bg-panel text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             Riders
@@ -53,13 +53,13 @@ function App() {
             onClick={() => setActiveTab('results')}
             className={`px-4 py-1.5 text-xs font-medium rounded transition-colors flex items-center gap-1.5 ${
               activeTab === 'results'
-                ? 'bg-surface text-white shadow-sm'
-                : 'text-gray-500 hover:text-gray-300'
+                ? 'bg-panel text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             Results
             {state === 'complete' && (
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
             )}
             {state === 'running' && (
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
@@ -70,17 +70,17 @@ function App() {
         {/* Status / run button */}
         <div className="flex items-center gap-3">
           {state === 'running' && (
-            <span className="text-amber-400 text-xs animate-pulse">Simulating…</span>
+            <span className="text-amber-600 text-xs animate-pulse">Simulating…</span>
           )}
           {state === 'error' && (
-            <span className="text-red-400 text-xs">Simulation failed</span>
+            <span className="text-red-600 text-xs">Simulation failed</span>
           )}
           <button
             onClick={() => { run(); setActiveTab('results'); }}
             disabled={state === 'running'}
             className={`px-4 py-1.5 text-xs rounded font-semibold transition-all ${
               state === 'running'
-                ? 'bg-amber-900/40 text-amber-600 cursor-not-allowed'
+                ? 'bg-amber-200 text-amber-600 cursor-not-allowed'
                 : 'bg-amber-400 text-black hover:bg-amber-300 active:scale-95'
             }`}
           >

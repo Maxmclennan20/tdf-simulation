@@ -34,7 +34,7 @@ export function ControlsPanel({ riders, onUpdate }: Props) {
           <div className="flex gap-2">
             <button
               onClick={() => fileRef.current?.click()}
-              className="px-3 py-1.5 text-xs rounded bg-card border border-border text-gray-300 hover:text-white hover:border-gray-500 transition-colors"
+              className="px-3 py-1.5 text-xs rounded bg-card border border-border text-gray-700 hover:text-gray-900 hover:border-gray-400 transition-colors"
             >
               Import Odds CSV
             </button>

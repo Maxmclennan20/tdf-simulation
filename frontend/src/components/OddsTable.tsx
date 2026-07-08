@@ -22,13 +22,13 @@ const COL_LABELS: Record<string, string> = {
 };
 
 function ProbBar({ pct }: { pct: number }) {
-  const color = pct > 0.2 ? 'bg-amber-400' : pct > 0.08 ? 'bg-blue-500' : 'bg-gray-600';
+  const color = pct > 0.2 ? 'bg-amber-400' : pct > 0.08 ? 'bg-blue-500' : 'bg-gray-400';
   return (
     <div className="flex items-center gap-2">
-      <div className="w-20 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+      <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${Math.min(pct * 100, 100)}%` }} />
       </div>
-      <span className="text-xs font-mono text-gray-300 w-10 text-right">{(pct * 100).toFixed(1)}%</span>
+      <span className="text-xs font-mono text-gray-700 w-10 text-right">{(pct * 100).toFixed(1)}%</span>
     </div>
   );
 }
@@ -51,8 +51,8 @@ export function OddsTable({ rows, extraColumns = [] }: Props) {
     ...extraColumns.map(c => c.key)];
 
   const SortIcon = ({ col }: { col: string }) => {
-    if (sortKey !== col) return <span className="text-gray-700 ml-1">↕</span>;
-    return <span className="text-amber-400 ml-1">{dir === 'desc' ? '↓' : '↑'}</span>;
+    if (sortKey !== col) return <span className="text-gray-300 ml-1">↕</span>;
+    return <span className="text-amber-600 ml-1">{dir === 'desc' ? '↓' : '↑'}</span>;
   };
 
   if (rows.length === 0) {
@@ -69,7 +69,7 @@ export function OddsTable({ rows, extraColumns = [] }: Props) {
               <th
                 key={col}
                 onClick={() => toggleSort(col as keyof OddsRow)}
-                className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-300 transition-colors select-none"
+                className="px-3 py-2 text-left text-[10px] font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700 transition-colors select-none"
               >
                 {COL_LABELS[col] ?? col}
                 <SortIcon col={col} />
@@ -84,29 +84,29 @@ export function OddsTable({ rows, extraColumns = [] }: Props) {
               <tr
                 key={row.rider_id + String(row.stage ?? '')}
                 className={`border-b border-border/40 transition-colors hover:bg-card/60 ${
-                  i === 0 ? 'bg-amber-950/20' : isPodium ? 'bg-card/20' : ''
+                  i === 0 ? 'bg-amber-100/70' : isPodium ? 'bg-card/20' : ''
                 }`}
               >
                 <td className="px-3 py-2 text-center">
                   {i === 0 ? (
                     <span className="inline-block w-5 h-5 rounded-full bg-amber-400 text-black text-[10px] font-bold flex items-center justify-center">1</span>
                   ) : i === 1 ? (
-                    <span className="text-gray-400 text-xs font-mono">2</span>
+                    <span className="text-gray-600 text-xs font-mono">2</span>
                   ) : i === 2 ? (
                     <span className="text-orange-600 text-xs font-mono">3</span>
                   ) : (
-                    <span className="text-gray-600 text-xs font-mono">{i + 1}</span>
+                    <span className="text-gray-400 text-xs font-mono">{i + 1}</span>
                   )}
                 </td>
-                <td className={`px-3 py-2 font-medium ${i === 0 ? 'text-white' : 'text-gray-200'}`}>{row.name}</td>
-                <td className="px-3 py-2 text-gray-400 text-xs">{row.team}</td>
+                <td className={`px-3 py-2 font-medium ${i === 0 ? 'text-gray-900' : 'text-gray-800'}`}>{row.name}</td>
+                <td className="px-3 py-2 text-gray-600 text-xs">{row.team}</td>
                 <td className="px-3 py-2">
                   <ProbBar pct={row.win_pct} />
                 </td>
-                <td className="px-3 py-2 font-mono text-sm text-gray-200">{row.decimal_odds}</td>
+                <td className="px-3 py-2 font-mono text-sm text-gray-800">{row.decimal_odds}</td>
 
                 {extraColumns.map(c => (
-                  <td key={c.key} className="px-3 py-2 text-gray-300 text-xs">
+                  <td key={c.key} className="px-3 py-2 text-gray-700 text-xs">
                     {c.key.includes('pct')
                       ? `${((Number((row as unknown as Record<string, unknown>)[c.key]) || 0) * 100).toFixed(1)}%`
                       : String((row as unknown as Record<string, unknown>)[c.key] ?? '')}

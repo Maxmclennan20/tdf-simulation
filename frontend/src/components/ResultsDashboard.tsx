@@ -71,14 +71,14 @@ export function ResultsDashboard({ simComplete, getResults, getExportUrl }: Prop
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 bg-surface">
         <div className="w-16 h-16 rounded-full border-2 border-border flex items-center justify-center">
-          <svg className="w-7 h-7 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
               d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
         </div>
         <div className="text-center">
-          <p className="text-gray-400 text-sm font-medium">No results yet</p>
-          <p className="text-gray-600 text-xs mt-1">Run a simulation to generate betting odds</p>
+          <p className="text-gray-600 text-sm font-medium">No results yet</p>
+          <p className="text-gray-400 text-xs mt-1">Run a simulation to generate betting odds</p>
         </div>
       </div>
     );
@@ -94,8 +94,8 @@ export function ResultsDashboard({ simComplete, getResults, getExportUrl }: Prop
             onClick={() => setActiveTab(t.key)}
             className={`px-4 py-2 text-xs font-medium rounded-t transition-colors ${
               activeTab === t.key
-                ? 'text-white bg-card border border-border border-b-card -mb-px'
-                : 'text-gray-500 hover:text-gray-300'
+                ? 'text-gray-900 bg-card border border-border border-b-card -mb-px'
+                : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             {t.label}
@@ -112,7 +112,7 @@ export function ResultsDashboard({ simComplete, getResults, getExportUrl }: Prop
               <select
                 value={selectedStage ?? ''}
                 onChange={e => setSelectedStage(e.target.value ? Number(e.target.value) : undefined)}
-                className="text-xs bg-card border border-border rounded px-2 py-1 text-gray-300 focus:outline-none focus:border-amber-400/50"
+                className="text-xs bg-card border border-border rounded px-2 py-1 text-gray-700 focus:outline-none focus:border-amber-400/50"
               >
                 <option value="">All Stages</option>
                 {Array.from({ length: 21 }, (_, i) => i + 1).map(n => (
@@ -175,7 +175,7 @@ function HeadToHeadView({ rows }: { rows: H2HRow[] }) {
   const p1 = match ? (match.rider1_id === Number(r1) ? match.p1 : match.p2) : 0;
   const p2 = match ? (match.rider1_id === Number(r2) ? match.p1 : match.p2) : 0;
 
-  const selectClass = "text-sm bg-card border border-border rounded px-3 py-1.5 text-gray-300 focus:outline-none focus:border-amber-400/50 min-w-[140px]";
+  const selectClass = "text-sm bg-card border border-border rounded px-3 py-1.5 text-gray-700 focus:outline-none focus:border-amber-400/50 min-w-[140px]";
 
   return (
     <div className="max-w-md">
@@ -185,7 +185,7 @@ function HeadToHeadView({ rows }: { rows: H2HRow[] }) {
           <option value="">Select Rider 1</option>
           {ids.map(id => <option key={id} value={id}>{id}</option>)}
         </select>
-        <span className="text-gray-600 text-sm font-medium">vs</span>
+        <span className="text-gray-400 text-sm font-medium">vs</span>
         <select value={r2} onChange={e => setR2(e.target.value)} className={selectClass}>
           <option value="">Select Rider 2</option>
           {ids.map(id => <option key={id} value={id}>{id}</option>)}
@@ -197,14 +197,14 @@ function HeadToHeadView({ rows }: { rows: H2HRow[] }) {
           {[{ id: r1, prob: p1 }, { id: r2, prob: p2 }].map(({ id, prob }) => (
             <div key={id}>
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-300">Rider {id}</span>
-                <span className={`font-mono font-semibold ${prob > 0.5 ? 'text-amber-400' : 'text-gray-400'}`}>
+                <span className="text-gray-700">Rider {id}</span>
+                <span className={`font-mono font-semibold ${prob > 0.5 ? 'text-amber-600' : 'text-gray-600'}`}>
                   {(prob * 100).toFixed(1)}%
                 </span>
               </div>
-              <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all ${prob > 0.5 ? 'bg-amber-400' : 'bg-gray-500'}`}
+                  className={`h-full rounded-full transition-all ${prob > 0.5 ? 'bg-amber-400' : 'bg-gray-400'}`}
                   style={{ width: `${prob * 100}%` }}
                 />
               </div>
