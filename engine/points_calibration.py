@@ -30,8 +30,17 @@ GC_BASE_SEED = 542
 # stages neither wins.  Shifting effective climbing/tt ratings moves the
 # gap distributions themselves.  Each step adds SCALE × ln(p_market/p_sim)
 # rating points, clamped to ±MAX.
+#
+# The per-step delta is trust-region clamped (±STEP_MAX) and annealed
+# (SCALE × DECAY^step): the elite TT curve is very steep (0.34 mu per rating
+# point), so an unclamped correction of 3+ points swings a TT specialist's
+# gaps ~3× and the loop oscillates (Evenepoel measured 0.27% → 4.98% on
+# consecutive steps).  Annealing also keeps the final update — which is
+# applied after the last measurement and never verified — small.
 GC_RATING_STEP_SCALE = 2.0
 GC_RATING_ADJUST_MAX = 8.0
+GC_RATING_STEP_MAX = 1.0
+GC_RATING_STEP_DECAY = 0.85
 
 # Riders not in the points_win market are extreme longshots.
 DEFAULT_UNRATED_ODDS = 1001.0
@@ -217,9 +226,13 @@ def apply_gc_bootstrap_calibration(
     riders: dict[int, RiderState],
     stages: dict[int, Stage],
     odds: dict[int, dict[str, float]],
+    watch: dict[int, str] | None = None,
 ) -> None:
     """
     Fine-tune calibration_factor for all covered GC riders via damped iterative bootstrap.
+
+    `watch` optionally maps rider_id -> label; per-step diagnostics for those
+    riders are printed (used by calibration debugging scripts).
 
     WHY BOOTSTRAP ON TOP OF apply_odds_calibration?
 
@@ -261,6 +274,15 @@ def apply_gc_bootstrap_calibration(
         return
     p_market = remove_overround_power(raw_market)
 
+    # Adaptive per-rider gain: riders whose GC probability is hypersensitive
+    # to the two levers (e.g. TT specialists whose wins are concentrated in
+    # the rare iterations where the favourite catastrophes) oscillate under
+    # fixed damping — their error flips sign every step.  Halving the gain on
+    # each sign flip damps oscillators geometrically while leaving riders on
+    # a monotonic approach untouched.
+    gain: dict[int, float] = {}
+    prev_err: dict[int, float] = {}
+
     for step in range(GC_MAX_CALIBRATION_STEPS):
         iters = run_simulation(
             riders, stages,
@@ -280,23 +302,42 @@ def apply_gc_bootstrap_calibration(
         if not p_sim:
             break
 
+        if watch:
+            print(f"gc bootstrap step {step}: " + " | ".join(
+                f"{label}: sim={p_sim.get(rid, 0)*100:5.2f}% tgt={p_market.get(rid, 0)*100:5.2f}% "
+                f"cal={riders[rid].calibration_factor:7.2f} adj={riders[rid].gc_rating_adjust:+5.2f} "
+                f"g={gain.get(rid, 1.0):.3f}"
+                for rid, label in watch.items() if rid in riders
+            ), flush=True)
+
         for rid in p_market:
             if rid not in riders or not riders[rid].is_active():
                 continue
             p_s = p_sim.get(rid, 0.0)
             p_m = p_market[rid]
 
+            g = gain.get(rid, 1.0)
             if p_s > 0 and p_m > 0:
-                multiplier = (p_m / p_s) ** GC_DAMPING
+                err = math.log(p_m / p_s)
+                if rid in prev_err and prev_err[rid] * err < 0:
+                    g *= 0.5
+                    gain[rid] = g
+                prev_err[rid] = err
+
+            rating_step_scale = GC_RATING_STEP_SCALE * (GC_RATING_STEP_DECAY ** step)
+            if p_s > 0 and p_m > 0:
+                multiplier = (p_m / p_s) ** (GC_DAMPING * g)
                 riders[rid].calibration_factor *= multiplier
-                riders[rid].gc_rating_adjust += GC_RATING_STEP_SCALE * math.log(p_m / p_s)
+                delta = rating_step_scale * g * err
+                delta = max(-GC_RATING_STEP_MAX, min(GC_RATING_STEP_MAX, delta))
+                riders[rid].gc_rating_adjust += delta
             elif p_m > 0:
                 # Covered rider never won in this step — gentle nudge up.
                 # Using 1.1 (not 1.5) prevents TT-weak riders like Seixas from
                 # exploding to cal=5000 when their structural TT ceiling means
                 # no amount of mountain-stage boosting achieves their market GC %.
                 riders[rid].calibration_factor *= 1.1
-                riders[rid].gc_rating_adjust += 0.5
+                riders[rid].gc_rating_adjust += min(GC_RATING_STEP_MAX, 0.5)
 
             riders[rid].gc_rating_adjust = max(
                 -GC_RATING_ADJUST_MAX,
