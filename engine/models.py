@@ -49,6 +49,7 @@ class RiderState:
     young_rider_calibration_factor: float = 1.0   # young rider odds calibration — post-GC ranking adjustment
     points_calibration_factor: float = 1.0        # green jersey odds calibration — scales effective points in aggregation
     ttt_team_factor: float = 1.0                  # TTT team odds calibration — applied on TTT stages
+    gc_rating_adjust: float = 0.0                 # GC bootstrap rating shift (pts) — applied to climbing/tt in time gaps
 
     def is_active(self) -> bool:
         return not self.dns and not self.dnf

@@ -91,10 +91,14 @@ def generate_time_gaps(
         # doubling the scale from 7 to 14 moved Pogacar's GC rate only ~1pp
         # (68.4% -> 69.4% vs a 74.1% power-method target).
         cal_penalty = max(0.0, 14.0 * (1.0 - rs.calibration_factor))
+        # gc_rating_adjust: second GC-bootstrap lever, set from market targets.
+        # calibration_factor only moves stage-draw probability, which saturates
+        # for the top favourite; this shifts the time-gap distributions that
+        # actually decide the GC between the leading contenders.
         if is_mountain:
-            mu, sigma = _mountain_params(rs.climbing + form_adj - cal_penalty)
+            mu, sigma = _mountain_params(rs.climbing + form_adj - cal_penalty + rs.gc_rating_adjust)
         else:
-            mu, sigma = _tt_params(rs.tt + form_adj - cal_penalty)
+            mu, sigma = _tt_params(rs.tt + form_adj - cal_penalty + rs.gc_rating_adjust)
         gaps[rid] = float(rng.lognormal(mean=mu, sigma=sigma))
 
     return gaps

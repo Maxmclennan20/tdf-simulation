@@ -1,4 +1,5 @@
 from __future__ import annotations
+import math
 from collections import defaultdict
 from engine.models import RiderState, Stage
 from engine.config import BUNCH_FINISH_STAGES
@@ -16,11 +17,21 @@ BASE_SEED = 42
 # or mediocre mountain but good all-round ratings win the GC far more than their
 # mountain-stage calibration implies.  Bootstrap measures actual GC win rates.
 GC_BOOTSTRAP_ITERS_PER_STEP = 6000  # iterations per step (higher SE per step: ±0.64pp vs ±1.1pp)
-GC_MAX_CALIBRATION_STEPS = 8        # 8 steps × 6000 iters; fewer steps needed with lower noise
+GC_MAX_CALIBRATION_STEPS = 10       # extra steps let the rating-adjust lever converge
 GC_MAX_CAL_FACTOR = 100.0           # hard ceiling: prevents TT-weak riders (Seixas, Del Toro) from
                                     # inflating calibration_factor to 1000+ without improving GC rate
 GC_DAMPING = 0.5
 GC_BASE_SEED = 542
+
+# Second bootstrap lever: per-rider rating shift applied inside time-gap
+# generation (RiderState.gc_rating_adjust).  calibration_factor only moves
+# stage-draw probability, which saturates at GC_MAX_CAL_FACTOR for the top
+# favourite while his rivals keep beating him through time-gap noise on
+# stages neither wins.  Shifting effective climbing/tt ratings moves the
+# gap distributions themselves.  Each step adds SCALE × ln(p_market/p_sim)
+# rating points, clamped to ±MAX.
+GC_RATING_STEP_SCALE = 2.0
+GC_RATING_ADJUST_MAX = 8.0
 
 # Riders not in the points_win market are extreme longshots.
 DEFAULT_UNRATED_ODDS = 1001.0
@@ -278,12 +289,19 @@ def apply_gc_bootstrap_calibration(
             if p_s > 0 and p_m > 0:
                 multiplier = (p_m / p_s) ** GC_DAMPING
                 riders[rid].calibration_factor *= multiplier
+                riders[rid].gc_rating_adjust += GC_RATING_STEP_SCALE * math.log(p_m / p_s)
             elif p_m > 0:
                 # Covered rider never won in this step — gentle nudge up.
                 # Using 1.1 (not 1.5) prevents TT-weak riders like Seixas from
                 # exploding to cal=5000 when their structural TT ceiling means
                 # no amount of mountain-stage boosting achieves their market GC %.
                 riders[rid].calibration_factor *= 1.1
+                riders[rid].gc_rating_adjust += 0.5
+
+            riders[rid].gc_rating_adjust = max(
+                -GC_RATING_ADJUST_MAX,
+                min(GC_RATING_ADJUST_MAX, riders[rid].gc_rating_adjust),
+            )
 
             # Hard ceiling: prevents calibration divergence for riders whose
             # TT deficit structurally limits their GC win probability below
